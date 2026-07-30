@@ -26,14 +26,20 @@ class TestStageClassification:
             f"s0 classified as '{label}', expected pre-detectable. Reasons: {reasons}"
         )
 
-    def test_s1_visible_or_predetectable(self):
-        """Stage 1 should classify as visible-technological or pre-detectable."""
+    def test_s1_visible_technological(self):
+        """Stage 1 must classify as visible-technological.
+
+        Previously this accepted 'visible-technological OR pre-detectable'.
+        That disjunction is why the stage-1 defect went unnoticed: regulatory
+        damping drove capability to ~1e-9 and the stage silently classified as
+        pre-detectable, contradicting manuscript 7.2 ("observability rises").
+        The disjunction is removed deliberately — see lessons_learned.md 6.3.
+        """
         params, y0 = get_stage("s1")
         result = integrate(params, y0)
         label, reasons = classify_regime(result, params)
-        assert label in ("visible-technological", "pre-detectable"), (
-            f"s1 classified as '{label}', expected visible-technological or pre-detectable. "
-            f"Reasons: {reasons}"
+        assert label == "visible-technological", (
+            f"s1 classified as '{label}', expected visible-technological. Reasons: {reasons}"
         )
 
     def test_s2_visible_technological(self):

@@ -66,6 +66,15 @@ def integrate(
     else:
         y0_vec = np.array([y0[0], y0[1]], dtype=float)
 
+    # Runaway guard: terminate cleanly if capability diverges.  Without this a
+    # superlinear/exponential kernel blows up in finite tau and the adaptive
+    # stepper grinds indefinitely against the singularity.
+    def _blow_up(tau_, y_, params_):
+        return float(y_[0]) - params_.I_abort
+
+    _blow_up.terminal = True
+    _blow_up.direction = 1.0
+
     sol = solve_ivp(
         fun=rhs,
         t_span=tau_span,
@@ -76,14 +85,40 @@ def integrate(
         atol=params.atol,
         dense_output=True,
         t_eval=t_eval,
+        events=_blow_up,
     )
 
     tau = sol.t
     I = sol.y[0]
     R = sol.y[1]
+    O_dyn = sol.y[2] if dynamic else None
+
+    # If integration stopped early (blow-up), pad the remaining samples so the
+    # arrays keep a fixed length.  Pad with the *terminal* state recorded by the
+    # event, not with the last t_eval sample: the singularity generally falls
+    # between two output samples, so the last sample badly understates the
+    # runaway (it can read ~30 while the solver actually reached I_abort).
+    n_missing = len(t_eval) - len(tau)
+    if n_missing > 0:
+        y_term = None
+        if getattr(sol, "y_events", None) and len(sol.y_events[0]):
+            y_term = sol.y_events[0][-1]
+
+        def _hold(arr, idx):
+            if y_term is not None:
+                fill = float(y_term[idx])
+            else:
+                fill = float(arr[-1]) if len(arr) else 0.0
+            return np.concatenate([arr, np.full(n_missing, fill)])
+
+        I = _hold(I, 0)
+        R = _hold(R, 1)
+        if dynamic:
+            O_dyn = _hold(O_dyn, 2)
+        tau = t_eval
 
     if dynamic:
-        O = sol.y[2]
+        O = O_dyn
     else:
         # Static mode: compute O = O_key(I) post hoc
         O_func = O_REGISTRY[params.O_key]
