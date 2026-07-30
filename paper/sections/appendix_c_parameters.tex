@@ -1,0 +1,66 @@
+\section{Parameters}
+\label{app:params}
+
+Table~\ref{tab:params} gives the default values and admissible ranges used
+throughout. All quantities are dimensionless. None is calibrated against data
+(\S\ref{sec:limitations}); the ranges bound exploration rather than expressing
+prior belief.
+
+\begin{table}[h]
+\centering\small
+\caption{Default parameter values and admissible ranges.}
+\label{tab:params}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Symbol & Default & Range & Role \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Capability, Eq.~\eqref{eq:dI}}}\\
+$a$    & 0.30 & $[0,2]$ & ordinary growth \\
+$b$    & 0.20 & $[0,2]$ & recursive growth \\
+$c$    & 0.50 & $[0,3]$ & regulatory damping \\
+$s_I$  & 0.10 & $[0,1]$ & capability saturation \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Regulation, Eq.~\eqref{eq:dR}}}\\
+$u$    & 0.40 & $[0,2]$ & reflective learning \\
+$v$    & 0.30 & $[0,2]$ & institutional gain \\
+$w$    & 0.50 & $[0,3]$ & erosion by recursive amplification \\
+$s_R$  & 0.15 & $[0,1]$ & regulation decay \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Observability, Eq.~\eqref{eq:dO}}}\\
+$p$    & 0.50 & $[0,3]$ & energy-use weight \\
+$q$    & 0.30 & $[0,3]$ & broadcast weight \\
+$r$    & 0.40 & $[0,3]$ & expansion weight \\
+$m$    & 0.50 & $[0,3]$ & compression suppression rate \\
+$n$    & 0.30 & $[0,3]$ & stealth suppression rate \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Drivers}}\\
+$A$, $\Arec$, $\Aref$, $Q$ & 1.0 & $[0,5]$ & amplification and institutional drivers \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Shape and detection}}\\
+$K$        & 5.0  & $[0.1,50]$  & half-saturation of the saturating kernel \\
+$\lambda$  & 0.30 & $[0.01,3]$  & observability scale \\
+$\kappa$   & 1.0  & $[0.01,10]$ & detection sensitivity \\
+$\Psearch$ & 0.50 & $[0,1]$     & search coverage \\
+$\Psurv$   & 0.80 & $[0,1]$     & survival probability \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Thresholds}}\\
+$\Theta$              & 5.0   & $[0.1,50]$   & runaway ratio $\Arec/\Reg$ \\
+$I_{\mathrm{runaway}}$& 50    & $[1,1000]$   & runaway capability \\
+$\Rmin$               & 0.05  & $[0,1]$      & regulatory exhaustion \\
+$\Iadv$               & 5.0   & $[0,100]$    & advanced capability \\
+$\Odet$               & 0.10  & $[0,1]$      & detection threshold \\
+$\Ofloor$             & $10^{-3}$ & $[0,0.1]$ & thermodynamic floor \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Numerics}}\\
+$\tau_{\max}$          & 50    & $[1,500]$ & integration horizon \\
+$I_{\mathrm{abort}}$   & $10^{4}$ & --- & runaway guard (\S\ref{sec:verification}) \\
+rtol / atol            & $10^{-6}$ / $10^{-9}$ & --- & solver tolerances \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Stage configurations differ from these defaults only in the drivers, the
+functional selections of Table~\ref{tab:registry}, and the initial conditions.
+Stages~0--2 additionally disable the regulatory damping term, reproducing the
+reduced models of the source framework literally rather than approximating them
+by parameter choice.

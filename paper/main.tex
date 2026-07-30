@@ -1,0 +1,131 @@
+%% The Recursive Observability Filter
+%% arXiv preprint -- first draft
+%% Build:  latexmk -pdf main.tex     (or  make )
+
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[round,authoryear]{natbib}
+\usepackage[colorlinks=true,allcolors=blue!60!black]{hyperref}
+
+% ---------------------------------------------------------------- notation
+\newcommand{\Icap}{I}                 % capability
+\newcommand{\Reg}{R}                  % regulation
+\newcommand{\Obs}{O}                  % observability
+\newcommand{\Icrit}{I_{\mathrm{crit}}}
+\newcommand{\Ofloor}{O_{\mathrm{floor}}}
+\newcommand{\Odet}{O_{\mathrm{detectable}}}
+\newcommand{\Arec}{A_{\mathrm{rec}}}
+\newcommand{\Aref}{A_{\mathrm{ref}}}
+\newcommand{\Ntrue}{N_{\mathrm{true}}}
+\newcommand{\Ndet}{N_{\mathrm{detectable}}}
+\newcommand{\Nobs}{N_{\mathrm{obs}}}
+\newcommand{\Psurv}{P_{\mathrm{surv}}}
+\newcommand{\Psearch}{P_{\mathrm{search}}}
+\newcommand{\Pdet}{P_{\mathrm{det}}}
+\newcommand{\Rmin}{R_{\mathrm{min}}}
+\newcommand{\Iadv}{I_{\mathrm{advanced}}}
+\newcommand{\dd}[2]{\frac{\mathrm{d}#1}{\mathrm{d}#2}}
+
+% claim-strength tags
+\definecolor{estab}{HTML}{1B7837}
+\definecolor{plaus}{HTML}{2166AC}
+\definecolor{hypo}{HTML}{B8860B}
+\definecolor{spec}{HTML}{B2182B}
+\newcommand{\Established}{{\color{estab}\textsc{[established]}}}
+\newcommand{\Plausible}{{\color{plaus}\textsc{[plausible]}}}
+\newcommand{\Hypothetical}{{\color{hypo}\textsc{[hypothetical]}}}
+\newcommand{\Speculative}{{\color{spec}\textsc{[speculative]}}}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\title{\bfseries The Recursive Observability Filter:\\
+A Dynamical-Systems Framework for Civilizational\\ Detectability and the Fermi Paradox}
+
+\author{%
+  \textit{[Author list to be completed]}\\[2pt]
+  \small Ulm University Quantum Hackathon\\
+  \small \texttt{[corresponding author e-mail]}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+The Fermi paradox is usually posed as a tension between the abundance of cosmic
+opportunity and the absence of confirmed evidence for extraterrestrial
+technological civilizations. Most quantitative treatments vary \emph{how many}
+civilizations arise while holding detectability fixed. We argue that
+detectability itself should be a dynamical variable, and develop the
+\emph{Recursive Observability Filter}: a compact three-variable dynamical system
+coupling an effective capability $\Icap$, a regulatory capacity $\Reg$, and an
+external observability $\Obs$, embedded in an explicit decomposition
+$\Nobs=\Ntrue\,\Psurv\,h(\Obs)\,\Psearch$ that separates existence, signal
+production and search coverage. We prove two structural properties of the
+formulation: observability is bounded below by a thermodynamic floor, and
+regulatory capacity is confined to the unit interval, both by construction
+rather than by clamping. A consequence is that peak-then-decline observability
+--- the signature usually \emph{assumed} in low-observability accounts of the
+Great Silence --- instead \emph{emerges} whenever signal suppression scales
+faster in capability than signal production. We treat the Lambert-$W$ threshold
+that motivated this work as an explicitly auxiliary diagnostic, and show that
+the threshold governing the integrated system is logarithmic rather than
+Lambert-type. The model is implemented twice, independently, in Python and in
+JavaScript; the two agree to within solver tolerance across twenty
+configurations, and the formulation is checked against closed-form solutions, an
+independent high-order integrator, and property-based testing over 300
+randomised parameter sets. We claim no solution to the Fermi paradox: the
+contribution is a transparent, falsifiable modelling environment in which the
+consequences of assumptions about recursive intelligence, regulation and
+observability can be examined and, where they fail, seen to fail.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Fermi paradox; Drake equation; technosignatures;
+detectability; recursive intelligence; nonlinear dynamics; Lambert $W$;
+astrobiology; model verification
+
+\vspace{1em}
+
+\input{sections/01_introduction}
+\input{sections/02_background}
+\input{sections/03_decomposition}
+\input{sections/04_model}
+\input{sections/05_lambert}
+\input{sections/06_verification}
+\input{sections/07_results}
+\input{sections/08_discussion}
+\input{sections/09_limitations}
+\input{sections/10_conclusions}
+
+\section*{Data and code availability}
+The simulator, the verification harness and the scripts that regenerate every
+figure in this paper are available at
+\url{https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer}.
+A browser implementation requiring no installation is included.
+\textit{[Mint a Zenodo DOI before submission.]}
+
+\section*{Acknowledgements}
+This work began at the Ulm University Quantum Hackathon, June 2026.
+
+\appendix
+\input{sections/appendix_a_notation}
+\input{sections/appendix_b_closed_forms}
+\input{sections/appendix_c_parameters}
+\input{sections/appendix_d_verification}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

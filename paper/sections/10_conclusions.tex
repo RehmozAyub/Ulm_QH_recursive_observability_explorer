@@ -1,0 +1,54 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+The Fermi paradox is usually modelled by varying how many civilizations arise. We
+have argued that it should also be modelled by varying how long they remain
+externally observable, and that observability is best treated as a state variable
+with its own equation of motion rather than as a coefficient.
+
+Three results follow.
+
+First, once existence, signal production and search coverage are separated in
+Eq.~\eqref{eq:decomp}, non-observation constrains their product and not $\Ntrue$
+alone. This is a logical point, but it is routinely elided, and it determines
+what a model of the paradox should vary. \Established
+
+Second, an observability equation must be constructed so that it cannot leave the
+physical range. Writing suppression as a fractional rate acting on emitted signal,
+above an explicit thermodynamic floor, achieves this by construction
+(Proposition~\ref{prop:obs}); the analogous treatment of erosion confines
+regulatory capacity to the unit interval (Proposition~\ref{prop:reg}). These are
+not cosmetic. The uncorrected formulation produced, and confidently labelled, a
+``quiet'' civilization whose observability was $-1431$.
+
+Third --- and this is the modelling result we would defend most strongly ---
+peak-then-decline observability need not be assumed. Because the quasi-steady
+observability is a ratio of production to suppression, the decline emerges
+whenever suppression scales faster in capability than production does
+(Eq.~\eqref{eq:decline}). A low-observability account of the Great Silence built
+this way does not assume its conclusion, and can be attacked on the plausibility
+of a scaling separation rather than on the choice of a curve. \Plausible
+
+We have also reported a negative result. The Lambert $W$ threshold that named and
+motivated this work is not a property of the integrated system: the natural
+balance cancels $\Icap$ and yields a logarithm, and recovering Lambert structure
+requires an auxiliary balance we must declare rather than derive
+(\S\ref{sec:lambert}). We keep the boundary as a diagnostic and depend on it
+nowhere.
+
+Finally, the framework is verified rather than merely implemented. Closed-form
+solutions, an independent high-order integrator, property-based testing over 300
+randomised parameter sets, and two independently written implementations agreeing
+to solver tolerance together establish that the equations described here are the
+equations solved. They establish nothing about whether those equations describe a
+real civilization, and we have been careful to keep verification and validation
+apart.
+
+The framework does not solve the Fermi paradox and is not intended to. Its
+purpose is to make a class of arguments about cosmic silence precise enough to be
+wrong: to say which assumptions produce which regimes, which conclusions survive
+a change of functional form, and what observation would count against them. The
+most useful next steps are a population-level treatment that can be set against
+grabby-aliens constraints, a collapse term that produces trajectories rather than
+flags, and a nondimensionalisation that reduces the parameter count to the few
+groups that actually govern the behaviour.

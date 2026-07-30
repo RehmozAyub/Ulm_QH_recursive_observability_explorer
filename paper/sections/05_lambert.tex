@@ -1,0 +1,110 @@
+\section{The Lambert threshold, and why it is auxiliary}
+\label{sec:lambert}
+
+This section reports a negative result. The Lambert $W$ function motivated the
+original formulation of this work, and it is mathematically correct where we use
+it --- but the balance that justifies $W$ is \emph{not} the balance governing
+the system we integrate. We set this out in full rather than presenting the
+boundary as though it were a property of the dynamics, because the distinction is
+exactly the kind of thing that separates a usable model from decorative
+mathematics.
+
+\subsection{When $W$ is actually required}
+
+The Lambert $W$ function is defined implicitly by $W(y)e^{W(y)} = y$, and is
+required precisely when an unknown appears both inside and outside an exponential
+\citep{corless1996}. A relation of the form
+\begin{equation}
+  x e^{x} = y \quad\Longrightarrow\quad x = W(y)
+\end{equation}
+genuinely needs it; a relation of the form $e^{x} = y$ does not, being solved by
+a logarithm. Any use of $W$ that does not rest on the former structure is
+ornamental.
+
+\subsection{The natural balance does not need $W$}
+
+Take the Lambert recursion kernel $F(\Icap) = \Icap e^{\Icap}$ from
+Table~\ref{tab:registry}. Equation~\eqref{eq:dI} becomes
+\begin{equation}
+  \dd{\Icap}{\tau} = a A \Icap + b \Arec \Icap e^{\Icap} - c \Reg \Icap - s_I \Icap^{2}.
+\end{equation}
+Setting recursive amplification against regulatory damping, and temporarily
+neglecting ordinary growth and saturation, gives
+\begin{equation}
+  b \Arec \Icap e^{\Icap} \;=\; c \Reg \Icap .
+\end{equation}
+For $\Icap > 0$ the factor $\Icap$ \emph{cancels on both sides}, leaving
+\begin{equation}
+  b \Arec e^{\Icap} = c \Reg
+  \qquad\Longrightarrow\qquad
+  \Icap_{\mathrm{thr}} = \ln\!\left(\frac{c \Reg}{b \Arec}\right),
+  \label{eq:logthreshold}
+\end{equation}
+a \emph{logarithmic} threshold. The Lambert structure is destroyed by the very
+cancellation that the $\Icap e^{\Icap}$ kernel appears to guarantee. This is the
+central observation of this section, and it is easy to miss.
+
+\subsection{Recovering Lambert structure requires a different balance}
+
+Lambert structure survives only if $\Icap e^{\Icap}$ is compared against a
+regulatory capacity that is \emph{not} itself proportional to $\Icap$. Introducing
+such a capacity,
+\begin{equation}
+  C_R \;=\; c\,\Reg^{\eta}\,\ln(1 + \Aref)\,\mathcal{E},
+  \label{eq:CR}
+\end{equation}
+with $\eta$ a regulation exponent and $\mathcal{E}$ an alignment factor, and
+imposing $b \Arec \Icap e^{\Icap} = C_R$, yields
+\begin{equation}
+  \Icap e^{\Icap} = \frac{C_R}{b \Arec}
+  \qquad\Longrightarrow\qquad
+  \boxed{\;\Icrit \;=\; W\!\left(\frac{c\,\Reg^{\eta}\,\ln(1+\Aref)\,\mathcal{E}}{b \Arec}\right).}
+  \label{eq:Icrit}
+\end{equation}
+Equation~\eqref{eq:Icrit} is a clean Lambert boundary, and it is what
+Figure~\ref{fig:lambert} displays.
+
+\subsection{The honest reading}
+
+$C_R$ appears nowhere in Eq.~\eqref{eq:dI}. The system we actually integrate
+contains the damping term $-c\Reg\Icap$, whose threshold is
+Eq.~\eqref{eq:logthreshold} --- logarithmic. Equation~\eqref{eq:Icrit} therefore
+describes a balance we have \emph{posited alongside} the dynamics, not one the
+dynamics contain.
+
+We therefore state plainly:
+
+\begin{quote}
+The Lambert boundary $\Icrit = W(C_R / b\Arec)$ is an \emph{auxiliary stability
+diagnostic} evaluated under a stated auxiliary balance. It is not a bifurcation
+of the integrated system, and no result in \S\ref{sec:results} depends on it.
+\Hypothetical
+\end{quote}
+
+The implementation enforces this distinction rather than relying on the text: the
+Lambert branch is guarded so that $W$ is evaluated only when the Lambert kernel
+is actually selected, and every other kernel falls back to the logarithmic
+threshold of Eq.~\eqref{eq:logthreshold}. Verification of the identity
+$\Icrit e^{\Icrit} = C_R/(b\Arec)$ to machine precision is reported in
+\S\ref{sec:verification}.
+
+\begin{figure}[t]
+\centering
+\includegraphics{figures/fig09_lambert_boundary.pdf}
+\caption{The auxiliary Lambert boundary $\Icrit$ over the $(\Arec,\Reg)$ plane,
+from Eq.~\eqref{eq:Icrit}. Higher regulatory capacity raises the critical
+capability that can be absorbed; stronger recursive amplification lowers it.
+This surface is a diagnostic under the auxiliary balance of Eq.~\eqref{eq:CR},
+not a bifurcation set of the integrated system.}
+\label{fig:lambert}
+\end{figure}
+
+\subsection{Why keep it at all}
+
+Three reasons. It provides an analytic handle on the intuition that regulation
+can absorb only so much recursive amplification; it makes the comparison between
+regulatory capacity and amplification pressure explicit and plottable; and,
+reported honestly, it is a worked example of the discipline the framework
+demands elsewhere --- a candidate piece of mathematics tested for whether it is
+required, and found to be required only under an assumption we then have to
+declare.
