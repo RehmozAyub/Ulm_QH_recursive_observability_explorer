@@ -1,9 +1,14 @@
 \section{Notation}
 \label{app:notation}
 
-\begin{table}[h]
-\centering\small
-\begin{tabular}{@{}llp{7.6cm}@{}}
+Every symbol used in the paper, in the order the variables, drivers,
+coefficients and derived quantities are introduced.
+
+% Deliberately not a float: a bare table in a section with no body text
+% drifts to the following page and leaves the heading stranded.
+\begin{center}
+\small
+\begin{tabular}{@{}llL{7.6cm}@{}}
 \toprule
 Symbol & Type & Meaning \\
 \midrule
@@ -37,9 +42,9 @@ $\Ntrue,\Ndet,\Nobs$ & counts & existing, detectable, observed civilizations \\
 $\Psurv,\Pdet,\Psearch$ & prob. & survival, detection, search coverage \\
 $\kappa$      & param & detection sensitivity \\
 $\Ofloor,\Odet$ & param & thermodynamic floor; detection threshold \\
-$\Iadv,\Rmin,\Theta$ & param & advanced-capability, regulatory and runaway thresholds \\
+$\Iadv,\Rmin,\Theta$ & param & capability, regulation and runaway thresholds \\
 $\eta,\mathcal{E}$ & param & regulation exponent; alignment factor (Lambert case) \\
 $W(\cdot)$    & function & Lambert $W$, principal branch \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{center}

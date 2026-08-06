@@ -3,32 +3,36 @@
 
 \subsection{Relation to existing solution classes}
 
-The framework is not a rival to the standard families of Fermi-paradox
-explanations but a way of expressing several of them in a common state space.
+This framework is not a rival to the standard families of Fermi-paradox
+explanations. It is a way of writing several of them in a common state space,
+where they can be compared instead of merely asserted at one another.
 
 \paragraph{Great Filter.} A filter is a statement about where probability mass is
-lost. In this framework a filter ahead of us appears as a region of parameter
-space from which trajectories reach the collapse proxy --- and the model makes
-explicit that a filter acting on \emph{observability} rather than survival is
-also possible, and would be empirically indistinguishable from a survival filter
-using non-detection alone \citep{hanson1998filter,cirkovic2018}. \Hypothetical
+lost. Here, a filter ahead of us shows up as a region of parameter space from
+which trajectories reach the collapse proxy. The model also makes something
+explicit that is usually left implicit: a filter acting on \emph{observability}
+rather than on survival is equally possible, and using non-detection alone you
+could never tell the two apart \citep{hanson1998filter,cirkovic2018}.
+\Hypothetical
 
 \paragraph{Grabby aliens.} \citet{hanson2021grabby} argue that if loud, expanding
-civilizations explain human earliness, then quiet civilizations must also be
-rare. This is the sharpest challenge to any low-observability account, ours
-included, and we do not claim to answer it. What the framework contributes is a
-place to state the disagreement precisely: the grabby-aliens argument constrains
-the \emph{joint} distribution of expansion behaviour and timing, which in our
-terms is a constraint on the population distribution of the expansion term $X$
-and the branch probabilities at stage~3 --- quantities the present model takes
-as given rather than derives. Coupling the two is the obvious next step.
+civilizations explain human earliness, quiet civilizations have to be rare too.
+This is the sharpest challenge to any low-observability account, ours included,
+and we do not claim to answer it. What the framework contributes is somewhere to
+state the disagreement precisely: the grabby-aliens argument constrains the
+\emph{joint} distribution of expansion behaviour and timing, which in our terms
+is a constraint on the population distribution of the expansion term $X$ and on
+the branch probabilities at stage~3 --- and both of those are quantities this
+model takes as given rather than derives. Coupling the two is the obvious next
+piece of work.
 
 \paragraph{Zoo and non-interference hypotheses.} These correspond to a stealth
 term $S$ that is large and deliberate \citep{ball1973zoo,bracewell1960}. The
-framework accommodates them but cannot distinguish deliberate quietness from
-emergent efficiency, since both enter $\Sigma$ identically. That degeneracy is
-worth stating: behavioural and thermodynamic explanations of quietness are not
-separable by observability alone.
+framework accommodates them comfortably, but it cannot tell deliberate quietness
+from emergent efficiency, because both enter $\Sigma$ in exactly the same way.
+That degeneracy is worth stating rather than glossing: behavioural and
+thermodynamic explanations of quietness are not separable by observability
+alone, and no amount of better instrumentation changes that.
 
 \paragraph{Percolation and expansion limits.} Models in which settlement stalls
 \citep{landis1998,forgan2009,armstrong2013} act on $X$, the expansion
@@ -37,53 +41,63 @@ Table~\ref{tab:registry}.
 
 \subsection{Thermodynamic discipline}
 
-The floor $\Ofloor$ is not a numerical convenience. Any civilization using energy
-radiates, and the possibility of true invisibility would require assumptions we
-have no basis to make \citep{dyson1960,kardashev1964}. Building the floor into
-the equation rather than into the prose has a practical benefit: it makes the
-strong claim unavailable. One cannot accidentally conclude from this model that
-a civilization vanished, only that it became hard to detect at a stated
-sensitivity $\kappa$ and coverage $\Psearch$. \Established
+The floor $\Ofloor$ is not a numerical convenience. Any civilization that uses
+energy radiates, and true invisibility would need assumptions about physics we
+have no basis for making \citep{dyson1960,kardashev1964}.
 
-This is the substantive difference between the corrected and uncorrected
-formulations of \S\ref{sec:derived}. The uncorrected version permitted arbitrarily
-negative observability, and therefore permitted --- indeed produced --- a
-conclusion that the framework's own thermodynamic commitments forbid.
+Putting the floor into the equation rather than into the prose buys something
+concrete: it makes the strong claim unavailable. You cannot accidentally
+conclude from this model that a civilization vanished. You can only conclude that
+it became hard to detect at a stated sensitivity $\kappa$ and a stated coverage
+$\Psearch$. \Established
+
+That is exactly the difference between the corrected and uncorrected
+formulations of \S\ref{sec:derived}. The uncorrected version permitted
+arbitrarily negative observability, and so permitted --- and in fact produced,
+and cheerfully labelled --- a conclusion its own thermodynamic commitments
+forbid.
 
 \subsection{Implications for search strategy}
 
-If the low-observability regime is populated at all, it has a testable
-consequence. In that regime production is dominated by residual energy use
-rather than by broadcast or expansion, since it is precisely the directed and
-efficient channels that suppression acts on most strongly. Search programmes
-sensitive to waste heat and infrared excess would then retain sensitivity where
-narrowband beacon searches lose it \citep{dyson1960,wright2014ghat,garrett2015}.
+If the low-observability regime is populated at all, it carries a testable
+consequence. In that regime, production is dominated by residual energy use
+rather than by broadcast or expansion, because the directed and efficient
+channels are precisely the ones suppression acts on hardest. Search programmes
+sensitive to waste heat and infrared excess would then keep their sensitivity
+where narrowband beacon searches lose theirs
+\citep{dyson1960,wright2014ghat,garrett2015}.
 
-This is a conditional, not a recommendation: it holds if C2 holds, and C2 is
-labelled \Hypothetical. Its value is that it is the kind of statement that could
-be wrong. Sustained null results from infrared surveys at improving sensitivity
-would push against it \citep{griffith2015,wright2022haystack}.
+This is a conditional, not a recommendation. It holds if the regime is
+populated, and that claim is labelled \Hypothetical. Its value is that it is the
+kind of statement that could turn out to be wrong: sustained null results from
+infrared surveys at improving sensitivity would push against it
+\citep{griffith2015,wright2022haystack}.
 
 \subsection{On the role of recursive and quantum capability}
 
-The model treats $\Arec$ as an exogenous driver and does not explain where
-recursive capability comes from. Quantum computation enters only as one possible
-contributor to that driver --- a mechanism by which the simulation, search and
+The model treats $\Arec$ as an exogenous driver and does not pretend to explain
+where recursive capability comes from. Quantum computation enters only as one
+possible contributor to that driver --- a way the simulation, search and
 optimisation problems gating technological progress might be accelerated
-\citep{shor1994,preskill2018}. We attach no magnitude to this and note that its
-sign of effect on \emph{observability} is not determined: faster capability growth
-raises production through $E$ and $\Icap$, but also raises suppression through
-$C$ and $S$, and Eq.~\eqref{eq:Ostar} shows that only the ratio matters. A
-civilization that computes more efficiently may be louder or quieter depending on
-which term scales faster. \Speculative
+\citep{shor1994,preskill2018}.
+
+We attach no magnitude to this, and there is a more interesting point to make
+than a caveat: its sign of effect on \emph{observability} is not determined at
+all. Faster capability growth raises production through $E$ and $\Icap$, but it
+also raises suppression through $C$ and $S$, and Eq.~\eqref{eq:Ostar} says only
+the ratio matters. A civilization that computes far more efficiently might end
+up louder or quieter, depending entirely on which term scales faster. Anyone
+asserting a direction here is asserting a scaling law they have not written
+down. \Speculative
 
 \subsection{Claim strengths}
 
-Table~\ref{tab:claims} collects every substantive claim with its label. We regard
-this as a necessary discipline in a subject where the distance between a model
-result and a statement about the universe is easily lost.
+Table~\ref{tab:claims} collects every substantive claim with its label. In a
+subject where the distance between a model result and a statement about the
+universe is so easily lost, we regard this as a necessary discipline rather than
+a decorative one.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering\small
 \caption{Claim-strength summary. \Established: supported by observation or
 standard theory. \Plausible: compatible with known theory. \Hypothetical: a

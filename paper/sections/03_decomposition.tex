@@ -4,11 +4,11 @@
 \subsection{The decomposition}
 
 Let $\Ntrue$ be the number of technological civilizations that exist in the
-relevant volume and epoch. Write $\Psurv$ for the probability that such a
-civilization persists into the phase we could in principle detect, $h(\Obs)$ for
-the probability that it produces a signature strong enough to register given its
-external observability $\Obs$, and $\Psearch$ for the probability that our
-searches intersect that signature. Then
+volume and epoch we care about. Write $\Psurv$ for the chance that such a
+civilization is still around in the phase we could detect at all, $h(\Obs)$ for
+the chance it is putting out a signature strong enough to register given its
+external observability $\Obs$, and $\Psearch$ for the chance our searches have
+actually looked where that signature is. Then
 \begin{equation}
   \boxed{\;\Nobs \;=\; \Ntrue \,\cdot\, \Psurv \,\cdot\, h(\Obs) \,\cdot\, \Psearch\;}
   \label{eq:decomp}
@@ -19,78 +19,104 @@ take
   h(\Obs) \;=\; 1 - e^{-\kappa \Obs},
   \label{eq:hdet}
 \end{equation}
-where $\kappa$ sets instrument sensitivity, and define the detection probability
-for a single civilization as $\Pdet = h(\Obs)\,\Psearch$.
+where $\kappa$ sets instrument sensitivity, and we write
+$\Pdet = h(\Obs)\,\Psearch$ for the detection probability of a single
+civilization.
 
-Equation~\eqref{eq:decomp} is a bookkeeping identity, not a theory; its value is
-that it forces the four mechanisms apart. \Established{} Figure~\ref{fig:venn}
-shows the resulting nesting and Figure~\ref{fig:drakemap} shows where the
-framework acts relative to Eq.~\eqref{eq:drake}.
+There is no theory in Eq.~\eqref{eq:decomp}. It is bookkeeping. Its whole value
+is that it refuses to let four different mechanisms hide inside one number.
+\Established{} Figure~\ref{fig:venn} shows how the sets nest, and
+Figure~\ref{fig:drakemap} shows where this framework acts on the Drake
+equation.
 
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
 \begin{tikzpicture}[font=\small]
-  \draw[rounded corners=8pt, fill=blue!5, draw=blue!50]
-        (0,0) rectangle (10.4,2.6);
-  \node[anchor=north west] at (0.15,2.55) {$\Ntrue$: civilizations that exist};
-  \draw[rounded corners=6pt, fill=blue!12, draw=blue!60]
-        (0.7,0.35) rectangle (9.7,1.95);
-  \node[anchor=north west] at (0.85,1.9) {$\Ndet$: produce a detectable signature ($\times\,\Psurv\, h(\Obs)$)};
-  \draw[rounded corners=4pt, fill=blue!25, draw=blue!70]
-        (1.5,0.6) rectangle (6.0,1.35);
-  \node[anchor=west] at (1.65,0.98) {$\Nobs$: actually observed ($\times\,\Psearch$)};
-  \node[anchor=west, font=\itshape\footnotesize] at (6.3,0.98) {non-observation lives here};
-  \draw[-{Latex[length=2mm]}, thick] (6.05,0.98) -- (6.25,0.98);
+  % --- outer set: everything that exists -------------------------------
+  \draw[rounded corners=10pt, fill=blue!4, draw=blue!45, line width=0.6pt]
+        (0,0) rectangle (12.4,5.05);
+  \node[anchor=north west] at (0.32,4.85)
+        {$\Ntrue$ \;---\; civilizations that exist};
+
+  % --- middle set: detectable in principle -----------------------------
+  \draw[rounded corners=8pt, fill=blue!11, draw=blue!60, line width=0.6pt]
+        (0.72,0.36) rectangle (11.68,3.95);
+  \node[anchor=north west] at (1.04,3.75)
+        {$\Ndet$ \;---\; produce a signature we could detect};
+  \node[anchor=north west, font=\footnotesize, text=blue!45!black] at (1.04,3.24)
+        {$\Ndet = \Ntrue \times \Psurv\, h(\Obs)$};
+
+  % --- inner set: actually observed ------------------------------------
+  \draw[rounded corners=6pt, fill=blue!24, draw=blue!75, line width=0.6pt]
+        (1.55,1.12) rectangle (10.85,2.72);
+  \node[anchor=north west] at (1.87,2.52)
+        {$\Nobs$ \;---\; actually observed by our searches};
+  \node[anchor=north west, font=\footnotesize, text=blue!45!black] at (1.87,2.02)
+        {$\Nobs = \Ndet \times \Psearch$};
+
+  % --- the gap is the point --------------------------------------------
+  \node[font=\footnotesize\itshape, text=blue!40!black] at (6.2,0.73)
+        {this band --- detectable, but never looked at --- is where
+         non-observation lives};
 \end{tikzpicture}
-\caption{Existence, detectability and observation are distinct. Non-observation
-constrains the innermost set, and therefore only the \emph{product} of the
-factors in Eq.~\eqref{eq:decomp}; it does not by itself constrain $\Ntrue$.}
+\caption{Existence, detectability and observation are three different things.
+Each band is reached from the one outside it by the factor written beneath its
+name. A null result constrains only the innermost set, and therefore only the
+\emph{product} in Eq.~\eqref{eq:decomp} --- never $\Ntrue$ on its own.}
 \label{fig:venn}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
-\begin{tikzpicture}[font=\small, node distance=3mm]
-  \node (drake) [draw, rounded corners, fill=gray!8, minimum height=8mm]
-    {$N = R_*\, f_p\, n_e\, f_l\, f_i\, f_c\, L$};
-  \node (lab1) [below=1mm of drake, font=\footnotesize\itshape] {classical Drake equation};
-  \node (arrow) [below=7mm of lab1] {};
-  \node (rof) [draw, rounded corners, fill=blue!8, minimum height=8mm, below=9mm of lab1]
-    {$\Nobs = \Ntrue \cdot \Psurv \cdot h(\Obs) \cdot \Psearch$};
-  \node (lab2) [below=1mm of rof, font=\footnotesize\itshape] {observability-aware form};
-  \draw[-{Latex[length=2mm]}, thick] (lab1) -- node[right, font=\footnotesize] {refine $L$} (rof);
-  \node (act) [right=14mm of rof, draw, dashed, rounded corners, fill=orange!10,
-               text width=3.3cm, align=center, font=\footnotesize]
-    {the model acts here:\\ $\Psurv$ and $h(\Obs)$};
-  \draw[-{Latex[length=2mm]}, dashed] (act) -- (rof);
+\begin{tikzpicture}[font=\small, >={Latex[length=2.2mm]}]
+  \node (drake) [draw, rounded corners=3pt, fill=gray!8, minimum height=9mm,
+                 inner xsep=6pt]
+        {$N = R_*\, f_p\, n_e\, f_l\, f_i\, f_c\, L$};
+  \node (lab1) [below=1.2mm of drake, font=\footnotesize\itshape]
+        {classical Drake equation};
+
+  \node (rof) [draw, rounded corners=3pt, fill=blue!8, minimum height=9mm,
+               inner xsep=6pt, below=13mm of lab1]
+        {$\Nobs = \Ntrue \cdot \Psurv \cdot h(\Obs) \cdot \Psearch$};
+  \node (lab2) [below=1.2mm of rof, font=\footnotesize\itshape]
+        {observability-aware form};
+
+  \draw[->, thick] (lab1) -- node[right, font=\footnotesize, xshift=1mm]
+        {open up $L$} (rof);
+
+  \node (act) [right=13mm of rof, draw, dashed, rounded corners=3pt,
+               fill=orange!12, text width=3.15cm, align=center,
+               font=\footnotesize]
+        {the model acts \\ only here: \\[1pt] $\Psurv$ and $h(\Obs)$};
+  \draw[->, dashed, thick] (act) -- (rof);
 \end{tikzpicture}
-\caption{The framework is a refinement of the Drake equation's lifetime and
-detectability content, not a replacement for it. It leaves the astrophysical
-factors untouched and acts on survival and signal production.}
+\caption{This framework refines the Drake equation rather than replacing it. The
+astrophysical factors are left exactly as they are; all the new machinery sits
+inside survival and signal production.}
 \label{fig:drakemap}
 \end{figure}
 
 \subsection{Why this matters for inference}
 
-Suppose a survey reports no detections. Under Eq.~\eqref{eq:decomp} the
-likelihood of that outcome depends on $\Psearch$ and on the distribution of
-$\Obs$ across the population, not on $\Ntrue$ alone. Two very different worlds
---- one in which civilizations are rare, and one in which they are common but
-mostly quiet during the epoch we can sample --- produce the same null result.
-Distinguishing them requires a model of how $\Obs$ is distributed and how it
-evolves, which is what \S\ref{sec:model} supplies. \Established
+Suppose a survey reports nothing. Under Eq.~\eqref{eq:decomp} the likelihood of
+that outcome depends on $\Psearch$ and on how $\Obs$ is spread across the
+population --- not on $\Ntrue$ by itself. Two very different universes give the
+same null result: one where civilizations are rare, and one where they are
+everywhere but mostly quiet during the sliver of time we can sample. Telling
+them apart needs a model of how $\Obs$ is distributed and how it changes, which
+is what \S\ref{sec:model} supplies. \Established
 
 \subsection{What observability is, and is not}
 
-We use $\Obs$ for \emph{external observability}: the strength of signatures
-leaving the system, aggregating waste heat, leakage and intentional emission,
-expansion footprint, and engineered structures. It is not energy use, and it is
-not capability. A civilization may be extremely capable and comparatively quiet;
-it may also be modest and loud.
+By $\Obs$ we mean \emph{external observability}: the strength of whatever leaves
+the system, adding up waste heat, leakage, deliberate emission, expansion
+footprint and engineered structures. It is not energy use and it is not
+capability. A civilization can be enormously capable and rather quiet; it can
+also be modest and extremely loud.
 
-Crucially, $\Obs$ can be small but never zero. Any energy use produces
-thermodynamic consequences, and a claim of true invisibility would require
-physics we have no warrant to assume \citep{dyson1960,kardashev1964}. We encode
-this directly: $\Obs$ is bounded below by a strictly positive floor $\Ofloor$
-(Proposition~\ref{prop:obs}). Low observability in this framework always means
-``hard to detect'', never ``absent''. \Established
+And $\Obs$ can get small, but it cannot get to zero. Using energy has
+thermodynamic consequences, and claiming otherwise would need physics we have no
+right to assume \citep{dyson1960,kardashev1964}. So we build that in: $\Obs$ is
+bounded below by a strictly positive floor $\Ofloor$
+(Proposition~\ref{prop:obs}). In this framework low observability always means
+hard to find. It never means gone. \Established

@@ -4,6 +4,15 @@
 
 A dynamical-systems simulation for the [Fermi Paradox](https://en.wikipedia.org/wiki/Fermi_paradox), built around the *Recursive Observability Filter* framework. The central question is not just *"how many civilizations exist?"* but *"how does detectability evolve as a civilization passes through stages of recursive intelligence?"*
 
+### ▶ Run it in your browser — nothing to install
+
+**<https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/>**
+
+Every stage preset loads with one click and every parameter is a slider.
+See [Deploying the simulator](#deploying-the-simulator) if the link is not live yet.
+
+The accompanying paper is in [`paper/main.pdf`](paper/main.pdf).
+
 ---
 
 ## The Core Idea
@@ -19,10 +28,17 @@ A civilization can **exist** without being detectable, and be detectable without
 | Equation | Meaning |
 |---|---|
 | `dI/dτ = a·A·I + b·A_rec·F(I) − c·R·I − s_I·I²` | Capability growth, recursive amplification, regulatory damping |
-| `dR/dτ = u·A_ref + v·Q − w·A_rec − s_R·R` | Regulation built up by institutions, eroded by recursive pressure |
-| `dO/dτ = p·E + q·B + r·X − m·C − n·S` | Observability driven by energy/broadcast/expansion, suppressed by compression/stealth |
+| `dR/dτ = (u·A_ref + v·Q)·(1 − R) − (w·A_rec + s_R)·R` | Regulation built on remaining headroom, eroded in proportion to what exists |
+| `dO/dτ = p·E + q·B + r·X − (O − O_floor)·(m·C + n·S)` | Observability driven by energy/broadcast/expansion, suppressed **fractionally** above a thermodynamic floor |
 
 Detection chain: `N_obs = N_true · P_surv · h(O) · P_search`
+
+The `R` and `O` equations are written this way on purpose. Erosion must be
+proportional to the regulation that exists, and suppression must act on the
+signal actually being emitted — you cannot suppress emissions that are not being
+made. Together these bound `R ∈ [0,1]` and `O ≥ O_floor` **by construction**
+rather than by clamping. See `CHANGELOG.md` for the earlier forms and why they
+failed.
 
 ---
 
@@ -90,6 +106,41 @@ streamlit run app.py
 ```
 
 The app opens at `http://localhost:8501`.
+
+---
+
+## Deploying the simulator
+
+The `web_html_version/` directory is a self-contained static site — plain HTML,
+CSS and JavaScript, no build step and no server-side code. That makes GitHub
+Pages the natural place to host it, and it is free for public repositories.
+
+`.github/workflows/pages.yml` in this repository already does the publishing.
+It needs **one manual step**, because GitHub will not enable Pages for you:
+
+1. Go to **Settings → Pages** in the repository on github.com.
+2. Under **Build and deployment → Source**, choose **GitHub Actions**.
+3. Push to `main` (or open **Actions → Deploy simulator to GitHub Pages → Run
+   workflow** to trigger it by hand).
+
+The site then appears at
+
+```
+https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/
+```
+
+and redeploys automatically on every push to `main`.
+
+**Why a workflow rather than the simpler "deploy from a branch" option?**
+Branch-based Pages can only serve the repository root or a folder named `docs/`.
+The simulator lives in `web_html_version/`, so serving it that way would mean
+either moving the directory or duplicating it. The workflow just uploads that
+one directory as the site root, which keeps the repository layout intact.
+
+**Note on external resources.** The page loads KaTeX, Plotly and Google Fonts
+from CDNs, so a viewer needs internet access. That is fine for a hosted link.
+If you ever need it to work fully offline, vendor those three dependencies into
+`web_html_version/` and switch the `<script>`/`<link>` tags to relative paths.
 
 ---
 

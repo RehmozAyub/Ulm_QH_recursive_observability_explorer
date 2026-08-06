@@ -9,7 +9,6 @@
 # latexmk requires Perl, which a stock MiKTeX installation does not provide.
 
 PYTHON ?= python
-NODE   ?= node
 LATEX  ?= pdflatex --enable-installer -interaction=nonstopmode -halt-on-error
 BIBTEX ?= bibtex
 
@@ -27,7 +26,6 @@ main.pdf: main.tex refs.bib $(SECTIONS) $(FIGURES)
 	$(LATEX) main.tex
 
 figures:
-	$(NODE) js_dump.js
 	$(PYTHON) make_figures.py
 
 clean:

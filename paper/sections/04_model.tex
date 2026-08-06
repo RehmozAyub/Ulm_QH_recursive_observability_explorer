@@ -3,32 +3,32 @@
 
 \subsection{Variables}
 
-The model evolves three coupled quantities in a dimensionless time $\tau$.
+Three quantities evolve together in a dimensionless time $\tau$.
 
-\begin{description}\itemsep2pt
+\begin{description}\itemsep3pt
   \item[$\Icap(\tau)$ --- effective capability.] A compressed systems variable
-    aggregating scientific capability, automation, computational capacity,
-    coordination and technological leverage. It is emphatically \emph{not} a
-    measure of intelligence in the psychometric sense, nor of moral worth, nor
-    of consciousness. A civilization may grow in $\Icap$ without becoming
-    wiser, safer or louder.
+    that rolls together scientific capability, automation, computational
+    capacity, coordination and technological leverage. It is not a measure of
+    intelligence in the psychometric sense, not a measure of moral worth, and
+    not a measure of consciousness. A civilization can grow enormously in
+    $\Icap$ without becoming wiser, safer or louder.
   \item[$\Reg(\tau)$ --- regulatory capacity.] Alignment, governance, safety
-    culture, institutional learning, epistemic reliability and error correction:
-    the capacity to prevent runaway or destructive instability. We treat it as a
-    \emph{quality index} normalised to $[0,1]$, which is what makes it
-    commensurable with the growth rates it opposes (\S\ref{sec:reg-eq}).
+    culture, institutional learning, epistemic reliability, error correction:
+    whatever it takes to stop a runaway. We treat it as a \emph{quality index}
+    normalised to $[0,1]$, and that normalisation is what makes it
+    commensurable with the growth rates it has to oppose (\S\ref{sec:reg-eq}).
   \item[$\Obs(\tau)$ --- external observability.] Signature strength as defined
     in \S\ref{sec:decomp}, bounded below by $\Ofloor > 0$.
 \end{description}
 
-Table~\ref{tab:vars} collects these with their drivers. Figure~\ref{fig:ladder}
-maps the conventional civilizational stages onto them and
-Figure~\ref{fig:schematic} shows the coupling structure.
+Table~\ref{tab:vars} lists these with their drivers. Figure~\ref{fig:ladder}
+maps the usual civilizational stages onto them, and Figure~\ref{fig:schematic}
+shows what is coupled to what.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering\small
-\caption{Model variables and drivers. Drivers are exogenous inputs; the three
-state variables are integrated.}
+\caption{Model variables and drivers. The three states are integrated; the
+drivers are exogenous inputs the user sets.}
 \label{tab:vars}
 \begin{tabular}{@{}llp{7.1cm}@{}}
 \toprule
@@ -40,91 +40,117 @@ $\Obs$    & state  & external observability: leakage, waste heat, expansion foot
 \midrule
 $A$       & driver & ordinary amplification pressure (baseline technological leverage) \\
 $\Arec$   & driver & recursive amplification: self-improvement, automated design, compute scaling \\
-$\Aref$   & driver & reflective amplification: capability directed at safety and foresight \\
+$\Aref$   & driver & reflective amplification: capability aimed at safety and foresight \\
 $Q$       & driver & institutional quality \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
-\begin{tikzpicture}[font=\footnotesize, node distance=2mm]
-  \tikzset{stg/.style={draw, rounded corners=2pt, minimum height=6.5mm,
-                       text width=1.75cm, align=center, fill=#1}}
-  \node[stg=gray!12]   (s0) {0\\pre-tech};
-  \node[stg=blue!10, right=2mm of s0]  (s1) {1\\early tech};
-  \node[stg=blue!16, right=2mm of s1]  (s2) {2\\planetary};
-  \node[stg=orange!16, right=2mm of s2] (s3) {3\\recursive\\transition};
-  \node[stg=red!14, above right=3mm and 6mm of s3]   (s4b) {4b\\expansionist};
-  \node[stg=green!14, right=6mm of s3]               (s4c) {4c\\optimized\\low-obs.};
-  \node[stg=red!22, below right=3mm and 6mm of s3]   (s4a) {4a\\collapse};
-  \node[stg=purple!12, right=6mm of s4c]             (s5) {5\\post-biological};
-  \draw[-{Latex[length=1.6mm]}] (s0)--(s1); \draw[-{Latex[length=1.6mm]}] (s1)--(s2);
-  \draw[-{Latex[length=1.6mm]}] (s2)--(s3);
-  \draw[-{Latex[length=1.6mm]}] (s3)--(s4b); \draw[-{Latex[length=1.6mm]}] (s3)--(s4c);
-  \draw[-{Latex[length=1.6mm]}] (s3)--(s4a); \draw[-{Latex[length=1.6mm]}] (s4c)--(s5);
-  \node[below=1mm of s4a, font=\scriptsize\itshape] {$\Obs$ spikes, then flags fire};
-  \node[above=1mm of s4b, font=\scriptsize\itshape] {$\Obs$ stays high};
-  \node[above=1mm of s5, font=\scriptsize\itshape] {poorly constrained};
+\begin{tikzpicture}[font=\scriptsize, >={Latex[length=1.8mm]}]
+  % Algorithmic hyphenation off: these boxes are too narrow for it to look
+  % like anything but a mistake.  Explicit hyphens may still break.
+  \hyphenpenalty=10000
+  \tikzset{stg/.style={draw, rounded corners=2.5pt, minimum height=7mm,
+                       text width=2.1cm, align=center, inner sep=2.2pt,
+                       fill=#1}}
+  \node[stg=gray!12]                      (s0) {\textbf{0}\\pre-technological};
+  \node[stg=blue!10,   right=2mm of s0]   (s1) {\textbf{1}\\early technological};
+  \node[stg=blue!17,   right=2mm of s1]   (s2) {\textbf{2}\\planetary};
+  \node[stg=orange!20, right=2mm of s2]   (s3) {\textbf{3}\\recursive transition};
+
+  \node[stg=red!13,    above right=3.5mm and 6mm of s3] (s4b)
+       {\textbf{4b}\\expansionist\\[1pt]\textit{$\Obs$ stays high}};
+  \node[stg=green!17,  right=6mm of s3]                 (s4c)
+       {\textbf{4c}\\optimized quiet\\[1pt]\textit{$\Obs$ peaks, then falls}};
+  \node[stg=red!24,    below right=3.5mm and 6mm of s3] (s4a)
+       {\textbf{4a}\\collapse\\[1pt]\textit{$\Reg$ exhausts}};
+  \node[stg=purple!13, right=6mm of s4c]                (s5)
+       {\textbf{5}\\post-biological\\[1pt]\textit{poorly constrained}};
+
+  \draw[->] (s0)--(s1);  \draw[->] (s1)--(s2);  \draw[->] (s2)--(s3);
+  \draw[->] (s3)--(s4b); \draw[->] (s3)--(s4c); \draw[->] (s3)--(s4a);
+  \draw[->] (s4c)--(s5);
 \end{tikzpicture}
-\caption{Civilizational stages and the branch structure at the recursive
-transition. Stages 0--2 are pre-recursive; the branch at stage 3 into
-expansionist, optimized-quiet and collapse outcomes is where the framework does
-its work.}
+\caption{Civilizational stages, and the branch at the recursive transition.
+Stages 0--2 are pre-recursive and behave the way anyone would expect. Everything
+interesting happens at stage~3, where the same machinery can go three different
+ways depending on which term wins.}
 \label{fig:ladder}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
-\begin{tikzpicture}[font=\small, node distance=16mm]
-  \tikzset{var/.style={draw, circle, minimum size=11mm, fill=#1}}
-  \node[var=blue!14]   (I) {$\Icap$};
-  \node[var=green!14, right=26mm of I] (R) {$\Reg$};
-  \node[var=orange!16, below=15mm of I, xshift=13mm] (O) {$\Obs$};
-  % regulation damps capability; there is deliberately NO arrow the other way,
-  % because dR/dtau does not depend on I -- see Eq. (6).
-  \draw[-{Latex[length=2mm]}] (R) -- node[above, font=\footnotesize] {$-\,c\Reg\Icap$} (I);
-  \draw[-{Latex[length=2mm]}] (I) -- node[left, font=\footnotesize, xshift=-1mm]
-        {$+\,\Pi(\Icap)$} (O);
-  \draw[-{Latex[length=2mm]}] (R) -- node[right, font=\footnotesize, xshift=1mm]
-        {$-\,\Sigma(\Icap,\Reg)$} (O);
-  \node[above left=1mm and 0mm of I, font=\footnotesize, align=right] {$A,\;\Arec$};
-  \node[above right=1mm and 0mm of R, font=\footnotesize, align=left] {$\Aref,\;Q$};
-  \draw[-{Latex[length=1.6mm]}] ($(I)+(-6mm,5mm)$) -- ($(I)+(-3.5mm,3.5mm)$);
-  \draw[-{Latex[length=1.6mm]}] ($(R)+(6mm,5mm)$) -- ($(R)+(3.5mm,3.5mm)$);
-  \node[below=1mm of O, font=\footnotesize] {$\rightarrow\; h(\Obs)\,\Psearch \;\rightarrow\; \Nobs$};
+\begin{tikzpicture}[font=\small, >={Latex[length=2.2mm]}]
+  \tikzset{var/.style={draw, circle, minimum size=13mm, line width=0.7pt, fill=#1},
+           drv/.style={font=\footnotesize, align=center, text=black!65}}
+
+  \node[var=blue!16]   (I) at (0,0)      {$\Icap$};
+  \node[var=green!18]  (R) at (6.4,0)    {$\Reg$};
+  \node[var=orange!22] (O) at (3.2,-3.3) {$\Obs$};
+
+  % exogenous drivers feeding the two upper states
+  \node[drv] (dI) at (0,1.85)   {$A,\;\Arec$};
+  \node[drv] (dR) at (6.4,1.85) {$\Aref,\;Q$};
+  \draw[->, thick, black!55] (dI) -- (I);
+  \draw[->, thick, black!55] (dR) -- (R);
+
+  % regulation damps capability
+  \draw[->, thick] (R) -- (I);
+  \node[anchor=north, font=\footnotesize, yshift=-1.2mm] at ($(I)!0.5!(R)$)
+       {damps: $-\,c\Reg\Icap$};
+
+  % the feedback that is deliberately absent -- drawn, then struck out
+  \draw[->, dashed, gray!60, line width=0.7pt] (I) to[bend left=26]
+        node[pos=0.5, inner sep=0] (nf) {} (R);
+  \draw[red!70, line width=1pt] ($(nf)+(-1.7mm,-1.7mm)$) -- ($(nf)+(1.7mm,1.7mm)$);
+  \draw[red!70, line width=1pt] ($(nf)+(-1.7mm,1.7mm)$) -- ($(nf)+(1.7mm,-1.7mm)$);
+  \node[above=2.4mm of nf, font=\footnotesize, text=gray!45!black]
+       {no $\Icap \rightarrow \Reg$ feedback};
+
+  % production and suppression of the signature
+  \draw[->, thick] (I) -- node[left, font=\footnotesize, align=right, xshift=-1.5mm]
+       {produces\\$+\,\Pi(\Icap)$} (O);
+  \draw[->, thick] (R) -- node[right, font=\footnotesize, align=left, xshift=1.5mm]
+       {suppresses\\$-\,\Sigma(\Icap,\Reg)$} (O);
+
+  \node[below=6mm of O, font=\footnotesize]
+       {$h(\Obs)\,\Psearch \;\longrightarrow\; \Nobs$};
 \end{tikzpicture}
-\caption{Coupling structure. Regulation damps capability through $-c\Reg\Icap$;
-observability is produced by capability, $\Pi(\Icap)$, and suppressed
-fractionally by capability \emph{and} regulation together,
-$\Sigma(\Icap,\Reg)$. Note the deliberate absence of an arrow from $\Icap$ to
-$\Reg$: in Eq.~\eqref{eq:dR} regulatory capacity responds only to the exogenous
-drivers $\Aref$ and $Q$ and to erosion by $\Arec$, not to capability itself.
-Closing that loop is a natural extension (\S\ref{sec:limitations}).}
+\caption{What is coupled to what. Regulation damps capability through
+$-c\Reg\Icap$. Observability is produced by capability and suppressed
+fractionally by capability \emph{and} regulation acting together --- $\Sigma$
+depends on both, even though the arrow has to be drawn from one of them. The
+struck-out arc is the coupling this model does \emph{not} have: in
+Eq.~\eqref{eq:dR}, regulatory capacity responds to the exogenous drivers and to
+erosion by $\Arec$, but never to capability itself. Closing that loop is the
+most interesting extension we can see (\S\ref{sec:limitations}).}
 \label{fig:schematic}
 \end{figure}
 
 \subsection{Capability}
 
-Capability grows by ordinary accumulation, $a A \Icap$, and by recursive
-amplification, $b \Arec F(\Icap)$, where $F$ encodes how aggressive the recursion
-is. It is damped by regulatory friction, $c \Reg \Icap$, and saturates through
-physical, energetic and coordination limits, $s_I \Icap^2$:
+Capability grows two ways: by ordinary accumulation, $a A \Icap$, and by
+recursive amplification, $b \Arec F(\Icap)$, where $F$ says how aggressive the
+recursion is. It is held back by regulatory friction, $c \Reg \Icap$, and it
+eventually runs into physical, energetic and coordination limits, $s_I \Icap^2$:
 \begin{equation}
   \dd{\Icap}{\tau} \;=\; a A \Icap \;+\; b \Arec F(\Icap) \;-\; c \Reg \Icap \;-\; s_I \Icap^2 .
   \label{eq:dI}
 \end{equation}
-Each term carries a mechanism, which is the point: the equation is assembled from
-interpretable balances rather than written down for convenience.
+Every term is there because some mechanism puts it there. That is the point: the
+equation is assembled out of balances you can argue with, not written down
+because it integrates nicely.
 
 \subsection{Regulation}
 \label{sec:reg-eq}
 
 Regulatory capacity is built by reflective capability and institutional quality,
-and eroded by the pace of recursive amplification. The essential modelling
-choice is that erosion must be proportional to the regulation that exists ---
-one cannot erode capacity that is absent --- and that building acts on the
-remaining headroom:
+and eroded by the sheer pace of recursive amplification. The modelling choice
+that matters is this: erosion has to be proportional to the regulation that is
+actually there, because you cannot erode capacity that does not exist, and
+building has to act on whatever headroom is left. So
 \begin{equation}
   \dd{\Reg}{\tau} \;=\; \underbrace{(u \Aref + v Q)}_{\textstyle B}\,(1-\Reg)
                  \;-\; \underbrace{(w \Arec + s_R)}_{\textstyle W}\,\Reg .
@@ -145,24 +171,26 @@ for all $\tau > 0$, and
 At $\Reg = 0$, Eq.~\eqref{eq:dR} gives $\mathrm{d}\Reg/\mathrm{d}\tau = B \geq 0$,
 so the lower boundary cannot be crossed downwards. At $\Reg = 1$ it gives
 $\mathrm{d}\Reg/\mathrm{d}\tau = -W \leq 0$, so the upper boundary cannot be
-crossed upwards. Equation~\eqref{eq:dR} is linear in $\Reg$ with constant
-coefficients when the drivers are constant, $\mathrm{d}\Reg/\mathrm{d}\tau =
-B - (B+W)\Reg$, whence the stated fixed point and
-$\Reg(\tau)=\Reg_\infty+(\Reg_0-\Reg_\infty)e^{-(B+W)\tau}$.
+crossed upwards. With constant drivers Eq.~\eqref{eq:dR} is linear in $\Reg$,
+$\mathrm{d}\Reg/\mathrm{d}\tau = B - (B+W)\Reg$, which gives the stated fixed
+point and $\Reg(\tau)=\Reg_\infty+(\Reg_0-\Reg_\infty)e^{-(B+W)\tau}$.
 \end{proof}
 
-Two consequences deserve emphasis. First, $\Reg_\infty$ is a \emph{share} --- the
-fraction of total pressure that is constructive --- which makes it directly
-interpretable. Second, because $\Reg \geq 0$, the damping term $-c\Reg\Icap$ in
-Eq.~\eqref{eq:dI} can never change sign. A formulation permitting $\Reg<0$ would
-make failing governance \emph{accelerate} capability, which is not a mechanism
-anyone intends to model.
+Two things follow, and both are worth pausing on. First, $\Reg_\infty$ is a
+\emph{share}: the fraction of the total pressure on governance that happens to
+be constructive. That makes it something you can reason about directly. Second,
+because $\Reg$ can never go negative, the damping term $-c\Reg\Icap$ in
+Eq.~\eqref{eq:dI} can never flip sign. Let $\Reg$ go negative and failing
+governance starts \emph{accelerating} capability, which is not a mechanism
+anybody means to model --- it is an arithmetic accident wearing a mechanism's
+clothes.
 
 \subsection{Observability}
 
 Observability is produced by energy use, broadcast leakage and expansion
-footprint, and suppressed by compression and stealth. Suppression is fractional:
-it acts on the signal being emitted, above an irreducible floor.
+footprint, and suppressed by compression and stealth. The suppression is
+fractional: it acts on the signal actually being emitted, above an irreducible
+floor.
 \begin{equation}
   \dd{\Obs}{\tau} \;=\; \underbrace{p E(\Icap) + q B_{\mathrm c}(\Icap) + r X(\Icap)}_{\textstyle \Pi(\Icap)}
   \;-\; (\Obs - \Ofloor)\,\underbrace{\big(m C(\Icap,\Reg) + n S(\Icap,\Reg)\big)}_{\textstyle \Sigma(\Icap,\Reg)} .
@@ -181,15 +209,16 @@ quasi-steady observability is
 \end{proposition}
 
 \begin{proof}
-At $\Obs = \Ofloor$ the suppression term vanishes identically and
+At $\Obs = \Ofloor$ the suppression term vanishes identically, leaving
 $\mathrm{d}\Obs/\mathrm{d}\tau = \Pi \geq 0$, so the floor cannot be crossed
 downwards. Setting $\mathrm{d}\Obs/\mathrm{d}\tau = 0$ in Eq.~\eqref{eq:dO} and
 solving for $\Obs$ gives Eq.~\eqref{eq:Ostar}.
 \end{proof}
 
-Equation~\eqref{eq:Ostar} is the analytical heart of the paper. Because
-$\Obs^{*}$ is a \emph{ratio}, its behaviour in $\Icap$ is governed by the
-relative scaling of production and suppression, not by either alone:
+Equation~\eqref{eq:Ostar} is the analytical heart of this paper, and the reason
+is that $\Obs^{*}$ is a \emph{ratio}. What it does as capability grows is
+decided by how production and suppression scale \emph{against each other},
+never by either one alone:
 \begin{equation}
   \Pi \sim \Icap, \quad \Sigma \sim \Icap \Reg
     \;\Longrightarrow\; \Obs^{*} \sim \frac{1}{\Reg}
@@ -201,23 +230,25 @@ relative scaling of production and suppression, not by either alone:
     \qquad\text{(observability declines with capability)}.
   \label{eq:decline}
 \end{equation}
-The second case produces peak-then-decline without any peaked functional form
-being selected. That is the sense in which the signature is derived rather than
-assumed, and we exhibit it numerically in \S\ref{sec:results}. \Plausible
+Look at what the second line does. It produces peak-then-decline without anyone
+choosing a peaked function --- the shape falls out of the ratio. That is what we
+mean by the signature being derived rather than assumed, and \S\ref{sec:results}
+shows it happening numerically. \Plausible
 
 \subsection{Interchangeable functional forms}
 
-No functional form above is privileged. Each is drawn from a registry
-(Table~\ref{tab:registry}), so that testing whether a conclusion survives a
-change of functions is a menu selection rather than a rewrite. This makes the
-robustness requirement operational rather than aspirational.
+None of the functional forms above is privileged, and we would rather not
+pretend otherwise. Each is drawn from a registry (Table~\ref{tab:registry}), so
+asking whether a conclusion survives a change of functions is a menu selection
+instead of a rewrite. That is what turns robustness from an aspiration into
+something you can actually check in an afternoon.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering\small
 \caption{Interchangeable functional forms. Any combination is admissible; the
-solver never references a specific choice.}
+solver never refers to a specific choice.}
 \label{tab:registry}
-\begin{tabular}{@{}llp{6.4cm}@{}}
+\begin{tabular}{@{}lL{3.3cm}L{6.6cm}@{}}
 \toprule
 Component & Variants & Form \\
 \midrule
@@ -235,17 +266,17 @@ $C$, $S$ suppression & linear, superlinear & $\Icap \Reg$; $\Icap^{2}\Reg$ \\
 
 \subsection{Regime classification}
 
-Trajectories are labelled by the criteria in Table~\ref{tab:regimes}, evaluated
-in a fixed priority order. The ordering is not commutative: a trajectory meeting
-two criteria receives the earlier label, and we state this explicitly because it
-affects interpretation of the phase portrait in \S\ref{sec:results}.
+Trajectories are labelled by the criteria in Table~\ref{tab:regimes}, checked in
+a fixed order. The order is not commutative --- a trajectory that meets two
+criteria gets the earlier label --- and we say so explicitly because it changes
+how the phase portrait in \S\ref{sec:results} should be read.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering\small
 \caption{Regime criteria, in evaluation order. Thresholds are model parameters,
 not empirical quantities.}
 \label{tab:regimes}
-\begin{tabular}{@{}llp{5.8cm}l@{}}
+\begin{tabular}{@{}llL{6.4cm}l@{}}
 \toprule
 \# & Regime & Criterion & Strength \\
 \midrule
@@ -260,6 +291,7 @@ not empirical quantities.}
 \end{tabular}
 \end{table}
 
-Regime~1 is named a \emph{proxy} deliberately. The model contains no mortality
-term, so it registers the conditions under which collapse is expected without
-integrating a collapse trajectory; we return to this in \S\ref{sec:limitations}.
+Regime~1 is called a \emph{proxy} on purpose. There is no mortality term
+anywhere in this model, so what it registers is the conditions under which
+collapse should be expected --- not a collapse. We come back to this in
+\S\ref{sec:limitations}, because it is a real limitation and not a quibble.

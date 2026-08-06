@@ -3,19 +3,19 @@
 
 \subsection{Configuration matrix}
 
-All oracles in \S\ref{sec:verification} are evaluated over the same twenty
+Every oracle in \S\ref{sec:verification} is evaluated over the same twenty
 configurations: the eight stage presets; five configurations exercising each
 recursion kernel of Table~\ref{tab:registry}; four exercising each static
 observability model; one with time-varying drivers; one Lambert configuration;
-and one selecting the non-default variant of every observability component. The
-intent is coverage of the registry rather than of parameter space, which is
-addressed separately by the randomised testing of oracle~E.
+and one that selects the non-default variant of every observability component.
+The intent is coverage of the registry rather than of parameter space, which is
+what the randomised testing of oracle~E is for.
 
 \subsection{Property-based testing}
 
 Oracle~E draws parameters uniformly from the ranges in
-Table~\ref{tab:params}, together with a randomly selected recursion kernel and
-randomly selected suppression forms, and asserts
+Table~\ref{tab:params}, together with a randomly chosen recursion kernel and
+randomly chosen suppression forms, and asserts
 \begin{equation}
   \Obs(\tau) \geq 0 \quad\text{and}\quad 0 \leq \Reg(\tau) \leq 1
   \qquad \text{for all sampled } \tau .
@@ -23,44 +23,30 @@ randomly selected suppression forms, and asserts
 Three hundred draws produced no violations, with global extrema
 $\min \Obs = 2.16\times10^{-3}$ and $\Reg \in [4.0\times10^{-3},\,0.999]$.
 
-This is a stronger form of evidence than checking the presets, because the
-propositions assert structural properties: a bound that held only for tuned
-configurations would not be a bound at all. The randomised search restricts the
-recursion kernel to the non-explosive variants, since the blow-up kernels
-terminate on the runaway guard and would test the guard rather than the
-invariant.
+This is stronger evidence than checking the presets, and the reason is worth
+spelling out: the propositions assert \emph{structural} properties, so a bound
+that held only for tuned configurations would not be a bound at all. It would be
+a property of our taste in parameters.
 
-\subsection{Cross-implementation comparison}
-
-The Python and JavaScript implementations share no numerical machinery. The
-JavaScript version implements its own Dormand--Prince tableau, its own
-quartic dense-output interpolation, its own initial-step heuristic, and a Lambert
-$W_0$ by Halley iteration rather than by library call. Trajectories are compared
-pointwise at 51 sampled times per configuration, and regime labels are compared
-directly.
-
-Reported discrepancies are therefore attributable to independent accumulations of
-truncation error at the same requested tolerance, and their magnitude
-($5.2\times10^{-5}$ in $\Icap$, against a requested relative tolerance of
-$10^{-6}$ over integration horizons of $\tau \leq 100$) is consistent with that
-interpretation.
+The randomised search restricts the recursion kernel to the non-explosive
+variants. The blow-up kernels terminate on the runaway guard, so including them
+would test the guard rather than the invariant.
 
 \subsection{Reproduction}
 
 \begin{verbatim}
-# Python reference: 62 tests
+# Test suite: 62 tests
 cd recursive_observability_explorer
 PYTHONPATH=. python -m pytest tests -q
 
 # Regenerate every data figure in this paper
 cd paper
-node js_dump.js          # browser-implementation trajectories
-python make_figures.py   # figures 5-10
+python make_figures.py
 
-# Build the paper
-latexmk -pdf main.tex
+# Build the paper (latexmk needs Perl, which a stock MiKTeX lacks)
+pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 \end{verbatim}
 
 Environment used: Python 3.11 with NumPy 2.4.2 and SciPy 1.17.1
-\citep{harris2020numpy,virtanen2020scipy}; Node.js 24.11 for the browser
-implementation. Figures~1--4 are TikZ and require no external data.
+\citep{harris2020numpy,virtanen2020scipy}. Figures~1--4 are TikZ and need no
+external data.

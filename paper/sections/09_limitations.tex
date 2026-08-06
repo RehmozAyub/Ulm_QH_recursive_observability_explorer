@@ -5,89 +5,91 @@
 
 \paragraph{No calibration.} Not one coefficient in
 Eqs.~\eqref{eq:dI}--\eqref{eq:dO} is constrained by data, because no relevant
-data exist. The model is dimensionless and exploratory. It supports statements of
-the form ``if these mechanisms operate with these relative strengths, then this
-follows''; it does not support point predictions, and the numerical values in
-\S\ref{sec:results} should be read as illustrations of qualitative regimes rather
-than as estimates.
+data exist. The model is dimensionless and exploratory. It supports statements
+of the form ``if these mechanisms operate with these relative strengths, then
+this follows'', and it supports nothing else. The numbers in
+\S\ref{sec:results} illustrate qualitative regimes. They are not estimates of
+anything, and should never be quoted as though they were.
 
-\paragraph{Collapse is a proxy, not a trajectory.} The model contains no
-mortality term. Stage~4a therefore raises the collapse criteria --- regulation
-falling below $\Rmin$, amplification exceeding regulation by more than $\Theta$
---- without capability actually declining. The ``transient spike then
-disappearance'' signature often associated with civilizational collapse is
-consequently \emph{not} reproduced dynamically. Adding a term coupling mortality
-to regulatory exhaustion is the most obvious extension.
+\paragraph{Collapse is a proxy, not a trajectory.} There is no mortality term.
+Stage~4a therefore raises the collapse criteria --- regulation below $\Rmin$,
+amplification exceeding regulation by more than $\Theta$ --- while capability
+carries on quite happily. The ``transient spike, then nothing'' signature people
+associate with civilizational collapse is consequently \emph{not} reproduced
+dynamically. Coupling mortality to regulatory exhaustion is the obvious fix and
+we have not done it.
 
-\paragraph{Stiffness.} Making suppression fractional (Eq.~\eqref{eq:dO}) has a
-numerical cost: the relaxation rate $\Sigma$ scales as $\Icap^{2}\Reg$ under the
-superlinear variants, and an explicit method requires step sizes of order
-$1/\Sigma$. Integration cost therefore grows linearly with the suppression
-weights, which bounds how far into the strongly-suppressing corner of parameter
-space the present solver can economically explore. An implicit or automatically
-stiffness-switching integrator would remove this, at the cost of the exact
-numerical parity with the browser implementation reported in
-\S\ref{sec:verification}.
+\paragraph{Stiffness.} Making suppression fractional costs something numerically.
+The relaxation rate $\Sigma$ scales as $\Icap^{2}\Reg$ under the superlinear
+variants, and an explicit method needs step sizes of order $1/\Sigma$, so
+integration cost grows linearly with the suppression weights. That bounds how
+far into the strongly-suppressing corner of parameter space we can economically
+go. An implicit or stiffness-switching integrator would remove the limit.
 
-\paragraph{The Lambert boundary is auxiliary.} As established in
-\S\ref{sec:lambert}, $C_R$ does not appear in the integrated system. No result in
-this paper depends on the Lambert boundary, and it should not be read as a
-bifurcation of the dynamics.
+\paragraph{The Lambert boundary is auxiliary.} As \S\ref{sec:lambert} establishes,
+$C_R$ does not appear in the integrated system. Nothing in this paper depends on
+the Lambert boundary, and it must not be read as a bifurcation of the dynamics.
 
-\paragraph{Degeneracy of quietness.} Deliberate stealth and emergent efficiency
-enter $\Sigma$ identically and cannot be distinguished by observability alone.
+\paragraph{Quietness is degenerate.} Deliberate stealth and emergent efficiency
+enter $\Sigma$ in exactly the same way, so observability alone cannot tell them
+apart. A civilization hiding on purpose and one that simply got very good at
+compression look identical from here.
 
 \paragraph{No feedback from capability to regulation.} Equation~\eqref{eq:dR}
 makes regulatory capacity depend on the exogenous drivers and on erosion by
-$\Arec$, but not on $\Icap$ itself (Figure~\ref{fig:schematic}). This is a real
-simplification: a highly capable civilization would plausibly be better at
-building governance as well as at eroding it, and the sign of that net effect is
-one of the more interesting open questions the framework could address. Closing
-the loop --- for example by making the building term depend on $\Aref \Icap$ ---
-is straightforward and would introduce the possibility of genuine bistability
-between well-regulated and poorly-regulated high-capability states.
+$\Arec$, but not on $\Icap$ at all (Figure~\ref{fig:schematic}). This is a real
+simplification and probably the most consequential one. A highly capable
+civilization would plausibly be better at building governance as well as better
+at eroding it, and which of those wins is not obvious. Closing the loop --- say
+by making the building term depend on $\Aref \Icap$ --- is straightforward, and
+it would open up genuine bistability between well-regulated and poorly-regulated
+high-capability states. We think that is the most interesting thing anyone could
+do with this model next.
 
-\paragraph{A single civilization, not a population.} The model integrates one
-trajectory. Statements about $\Nobs$ therefore assume a population whose members
-share parameters, which is plainly false. A population-level treatment would
-integrate over distributions of the drivers and branch probabilities, and is
-required before the framework can be compared quantitatively with grabby-aliens
-style arguments \citep{hanson2021grabby,prantzos2020}.
+\paragraph{One civilization, not a population.} The model integrates a single
+trajectory. Any statement about $\Nobs$ therefore assumes a population whose
+members all share parameters, which is plainly false. A population-level
+treatment would integrate over distributions of the drivers and the branch
+probabilities, and it is required before this framework can be compared
+quantitatively with grabby-aliens arguments
+\citep{hanson2021grabby,prantzos2020}.
 
 \subsection{Failure criteria}
 
-We state in advance what would count against the framework, since a model of this
-kind is otherwise difficult to argue with.
+A model of this kind is hard to argue with unless its author says in advance
+what would count against it. So:
 
-\begin{enumerate}\itemsep2pt
-  \item \textbf{Non-robustness.} If the low-observability regime arises only for a
-    narrow band of suppression scalings, or only under one choice from
-    Table~\ref{tab:registry}, the conclusion is an artefact of that choice.
+\begin{enumerate}\itemsep3pt
+  \item \textbf{Non-robustness.} If the low-observability regime arises only for
+    a narrow band of suppression scalings, or only under one choice from
+    Table~\ref{tab:registry}, then the conclusion is an artefact of that choice.
     \S\ref{sec:results} reports the dependence explicitly; the regime does not
-    arise under observability model A.
-  \item \textbf{Assumed rather than derived decline.} If peak-then-decline could be
-    obtained only by selecting a peaked $\Obs(\Icap)$, the framework would add
-    nothing to existing low-observability arguments. Eq.~\eqref{eq:decline} and
-    \S\ref{sec:derived} are the response; if the required scaling separation
-    ($\Sigma$ growing faster in $\Icap$ than $\Pi$) can be shown to be physically
-    implausible, that response fails.
+    arise under observability model~A.
+  \item \textbf{Assumed rather than derived decline.} If peak-then-decline could
+    be obtained only by selecting a peaked $\Obs(\Icap)$, this framework would
+    add nothing to the low-observability arguments that already exist.
+    Equation~\eqref{eq:decline} and \S\ref{sec:derived} are our answer. Show
+    that the required scaling separation --- $\Sigma$ growing faster in $\Icap$
+    than $\Pi$ --- is physically implausible, and the answer fails.
   \item \textbf{Collapse and quietness not separated.} If the model could not
-    distinguish a civilization that ended from one that became quiet, it would
-    reproduce the ambiguity it was built to dissolve. The regime criteria separate
-    them, but only as far as the collapse proxy is meaningful --- see above.
+    distinguish a civilization that ended from one that went quiet, it would
+    reproduce the exact ambiguity it was built to dissolve. The regime criteria
+    do separate them, but only as far as the collapse proxy means anything --- see
+    above.
   \item \textbf{Thermodynamic violation.} Any result requiring $\Obs \leq 0$
-    invalidates the physical interpretation. Proposition~\ref{prop:obs} makes
-    this unreachable by construction, and the property-based tests of
-    \S\ref{sec:verification} check it empirically.
-  \item \textbf{Search coverage ignored.} If $\Psearch$ is dropped, non-detection
-    is misread as evidence about $\Ntrue$. It appears explicitly in
-    Eq.~\eqref{eq:decomp}.
+    invalidates the physical interpretation outright.
+    Proposition~\ref{prop:obs} makes that unreachable by construction, and the
+    property-based tests of \S\ref{sec:verification} check it empirically over
+    300 randomised configurations.
+  \item \textbf{Search coverage ignored.} Drop $\Psearch$ and non-detection gets
+    misread as evidence about $\Ntrue$. It appears explicitly in
+    Eq.~\eqref{eq:decomp} and must stay there.
   \item \textbf{Empirical pressure.} Sustained null results from infrared and
     waste-heat surveys at improving sensitivity would argue against the quiet
-    regime being populated, since that is the channel it predicts remains open
-    \citep{griffith2015,garrett2015,wright2022haystack}.
+    regime being populated, since that is precisely the channel it predicts
+    stays open \citep{griffith2015,garrett2015,wright2022haystack}.
 \end{enumerate}
 
-Criterion 6 is the only one that is empirical rather than internal. That
-asymmetry is itself a limitation of the subject, not of the model, and we prefer
-to name it than to disguise it.
+Only the last of those is empirical rather than internal. That asymmetry is a
+limitation of the subject rather than of the model, and we would rather name it
+than dress it up.
