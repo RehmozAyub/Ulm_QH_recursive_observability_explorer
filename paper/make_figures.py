@@ -56,6 +56,10 @@ plt.rcParams.update({
     "figure.dpi": 200,
     "savefig.bbox": "tight",
     "savefig.pad_inches": 0.02,
+    # Type 42 (TrueType), not matplotlib's default Type 3 bitmaps: arXiv and
+    # most publishers reject Type 3 fonts outright.
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
 })
 
 C_I, C_R_, C_O = "#0072B2", "#009E73", "#D55E00"   # capability, regulation, observability
