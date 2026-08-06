@@ -1,0 +1,122 @@
+\section{Separating existence, detectability and observation}
+\label{sec:decomp}
+
+\subsection{The decomposition}
+
+Let $\Ntrue$ be the number of technological civilizations that exist in the
+volume and epoch we care about. Write $\Psurv$ for the chance that such a
+civilization is still around in the phase we could detect at all, $h(\Obs)$ for
+the chance it is putting out a signature strong enough to register given its
+external observability $\Obs$, and $\Psearch$ for the chance our searches have
+actually looked where that signature is. Then
+\begin{equation}
+  \boxed{\;\Nobs \;=\; \Ntrue \,\cdot\, \Psurv \,\cdot\, h(\Obs) \,\cdot\, \Psearch\;}
+  \label{eq:decomp}
+\end{equation}
+with $h$ a saturating map from signature strength to detection probability. We
+take
+\begin{equation}
+  h(\Obs) \;=\; 1 - e^{-\kappa \Obs},
+  \label{eq:hdet}
+\end{equation}
+where $\kappa$ sets instrument sensitivity, and we write
+$\Pdet = h(\Obs)\,\Psearch$ for the detection probability of a single
+civilization.
+
+There is no theory in Eq.~\eqref{eq:decomp}. It is bookkeeping. Its whole value
+is that it refuses to let four different mechanisms hide inside one number.
+\Established{} Figure~\ref{fig:venn} shows how the sets nest, and
+Figure~\ref{fig:drakemap} shows where this framework acts on the Drake
+equation.
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}[font=\small]
+  % --- outer set: everything that exists -------------------------------
+  \draw[rounded corners=10pt, fill=blue!4, draw=blue!45, line width=0.6pt]
+        (0,0) rectangle (12.4,5.05);
+  \node[anchor=north west] at (0.32,4.85)
+        {$\Ntrue$ \;---\; civilizations that exist};
+
+  % --- middle set: detectable in principle -----------------------------
+  \draw[rounded corners=8pt, fill=blue!11, draw=blue!60, line width=0.6pt]
+        (0.72,0.36) rectangle (11.68,3.95);
+  \node[anchor=north west] at (1.04,3.75)
+        {$\Ndet$ \;---\; produce a signature we could detect};
+  \node[anchor=north west, font=\footnotesize, text=blue!45!black] at (1.04,3.24)
+        {$\Ndet = \Ntrue \times \Psurv\, h(\Obs)$};
+
+  % --- inner set: actually observed ------------------------------------
+  \draw[rounded corners=6pt, fill=blue!24, draw=blue!75, line width=0.6pt]
+        (1.55,1.12) rectangle (10.85,2.72);
+  \node[anchor=north west] at (1.87,2.52)
+        {$\Nobs$ \;---\; actually observed by our searches};
+  \node[anchor=north west, font=\footnotesize, text=blue!45!black] at (1.87,2.02)
+        {$\Nobs = \Ndet \times \Psearch$};
+
+  % --- the gap is the point --------------------------------------------
+  \node[font=\footnotesize\itshape, text=blue!40!black] at (6.2,0.73)
+        {this band --- detectable, but never looked at --- is where
+         non-observation lives};
+\end{tikzpicture}
+\caption{Existence, detectability and observation are three different things.
+Each band is reached from the one outside it by the factor written beneath its
+name. A null result constrains only the innermost set, and therefore only the
+\emph{product} in Eq.~\eqref{eq:decomp} --- never $\Ntrue$ on its own.}
+\label{fig:venn}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}[font=\small, >={Latex[length=2.2mm]}]
+  \node (drake) [draw, rounded corners=3pt, fill=gray!8, minimum height=9mm,
+                 inner xsep=6pt]
+        {$N = R_*\, f_p\, n_e\, f_l\, f_i\, f_c\, L$};
+  \node (lab1) [below=1.2mm of drake, font=\footnotesize\itshape]
+        {classical Drake equation};
+
+  \node (rof) [draw, rounded corners=3pt, fill=blue!8, minimum height=9mm,
+               inner xsep=6pt, below=13mm of lab1]
+        {$\Nobs = \Ntrue \cdot \Psurv \cdot h(\Obs) \cdot \Psearch$};
+  \node (lab2) [below=1.2mm of rof, font=\footnotesize\itshape]
+        {observability-aware form};
+
+  \draw[->, thick] (lab1) -- node[right, font=\footnotesize, xshift=1mm]
+        {open up $L$} (rof);
+
+  \node (act) [right=13mm of rof, draw, dashed, rounded corners=3pt,
+               fill=orange!12, text width=3.15cm, align=center,
+               font=\footnotesize]
+        {the model acts \\ only here: \\[1pt] $\Psurv$ and $h(\Obs)$};
+  \draw[->, dashed, thick] (act) -- (rof);
+\end{tikzpicture}
+\caption{This framework refines the Drake equation rather than replacing it. The
+astrophysical factors are left exactly as they are; all the new machinery sits
+inside survival and signal production.}
+\label{fig:drakemap}
+\end{figure}
+
+\subsection{Why this matters for inference}
+
+Suppose a survey reports nothing. Under Eq.~\eqref{eq:decomp} the likelihood of
+that outcome depends on $\Psearch$ and on how $\Obs$ is spread across the
+population --- not on $\Ntrue$ by itself. Two very different universes give the
+same null result: one where civilizations are rare, and one where they are
+everywhere but mostly quiet during the sliver of time we can sample. Telling
+them apart needs a model of how $\Obs$ is distributed and how it changes, which
+is what \S\ref{sec:model} supplies. \Established
+
+\subsection{What observability is, and is not}
+
+By $\Obs$ we mean \emph{external observability}: the strength of whatever leaves
+the system, adding up waste heat, leakage, deliberate emission, expansion
+footprint and engineered structures. It is not energy use and it is not
+capability. A civilization can be enormously capable and rather quiet; it can
+also be modest and extremely loud.
+
+And $\Obs$ can get small, but it cannot get to zero. Using energy has
+thermodynamic consequences, and claiming otherwise would need physics we have no
+right to assume \citep{dyson1960,kardashev1964}. So we build that in: $\Obs$ is
+bounded below by a strictly positive floor $\Ofloor$
+(Proposition~\ref{prop:obs}). In this framework low observability always means
+hard to find. It never means gone. \Established

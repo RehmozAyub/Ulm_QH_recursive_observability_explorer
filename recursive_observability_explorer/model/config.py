@@ -17,24 +17,50 @@ class ModelParams:
     """Complete parameter set for the Recursive Observability Filter model."""
 
     # --- Capability eq: dI/dtau = a*A*I + b*A_rec*F(I) - c*R*I - sI*I**2 ---
+    # The -c*R*I damping term is active only when term_damping is True.  Stage
+    # presets 0-2 disable it to reproduce the reduced models of manuscript
+    # sections 7.1-7.3 literally.
     a:   float = 0.30     # ordinary growth coefficient
     b:   float = 0.20     # recursive growth coefficient
     c:   float = 0.50     # regulatory damping coefficient
     sI:  float = 0.10     # capability saturation
 
-    # --- Regulation eq: dR/dtau = u*A_ref + v*Q - w*A_rec - sR*R ---
+    # --- Regulation eq (bounded form, see NOTE below) ---
+    # dR/dtau = (u*A_ref + v*Q)*(1 - R) - (w*A_rec + sR)*R
+    #
+    # NOTE: erosion is proportional to R, and building is proportional to the
+    # remaining headroom (1 - R).  R is therefore a *regulation quality index*
+    # confined to [0, 1] by construction:
+    #     at R = 0  ->  dR/dtau = u*A_ref + v*Q >= 0   (cannot go negative)
+    #     at R = 1  ->  dR/dtau = -(w*A_rec + sR) <= 0 (cannot exceed one)
+    # Equilibrium is the "building share"
+    #     R_inf = (u*A_ref + v*Q) / (u*A_ref + v*Q + w*A_rec + sR)
+    # The previous form used a constant erosion term -w*A_rec, which drained R
+    # at a rate independent of R and drove it negative (flipping -c*R*I into
+    # positive feedback).  See lessons_learned.md section 6.2.
     u:   float = 0.40     # reflective learning gain
     v:   float = 0.30     # institutional quality gain
     w:   float = 0.50     # erosion by recursive amplification
     sR:  float = 0.15     # regulation decay
 
     # --- Observability eq coefficients ---
-    # dO/dtau = p*E + q*B + r*X - m*C - n*S
+    # dO/dtau = p*E + q*B + r*X - (O - O_floor)*(m*C + n*S)
+    #
+    # NOTE: compression and stealth are *fractional* suppression rates — they
+    # reduce the signal actually being emitted rather than subtracting an
+    # absolute flux.  This bounds O from below by O_floor:
+    #     at O = O_floor -> dO/dtau = production >= 0
+    # The quasi-steady state is
+    #     O* = O_floor + (p*E + q*B + r*X) / (m*C + n*S)
+    # so peak-then-decline emerges when suppression grows faster in I than
+    # production does (e.g. C_key/S_key = "superlinear"), rather than being
+    # imposed by selecting O_key = "peaked".
+    # See lessons_learned.md section 6.1.
     p:   float = 0.50     # energy-use signature weight
     q:   float = 0.30     # broadcast signature weight
     r:   float = 0.40     # expansion signature weight
-    m:   float = 0.50     # compression suppression weight
-    n:   float = 0.30     # stealth suppression weight
+    m:   float = 0.50     # compression suppression rate
+    n:   float = 0.30     # stealth suppression rate
 
     # --- Driver levels (constant by default) ---
     A:     float = 1.0    # amplification pressure
@@ -78,6 +104,31 @@ class ModelParams:
     I_advanced:   float = 5.0    # "advanced" capability threshold
     O_detectable: float = 0.10   # below this O is "low-observable"
     eps:          float = 1e-6   # numerical guard
+
+    # --- Thermodynamic observability floor ---
+    # Irreducible signature strength: a civilisation using energy is never
+    # perfectly invisible (manuscript section 4.4).  O is bounded below by this
+    # value structurally, so "low-observable" can never mean "negative".
+    O_floor: float = 1e-3
+
+    # --- Term mask (reduced stage models, manuscript sections 7.1-7.3) ---
+    term_damping: bool = True    # include -c*R*I in dI/dtau
+
+    # --- Runaway guard ---
+    # Superlinear and exponential recursion kernels produce finite-time
+    # blow-up: dI/dtau ~ I^2 or e^I diverges at a finite tau.  An adaptive
+    # solver approaching that singularity takes ever-smaller steps and never
+    # terminates.  Integration stops cleanly once I exceeds this bound and the
+    # remaining samples hold the terminal state (matching the browser
+    # implementation, which caps its own step count).
+    #
+    # 1e4 is 200x the default I_runaway threshold, so any trajectory reaching it
+    # is already classified "runaway" and further detail carries no information.
+    # The bound also caps solver cost: dO/dtau is stiff (its relaxation rate
+    # m*C + n*S grows like I^2*R), and an explicit RK45 needs h <~ 2.8/rate, so
+    # the step count grows with both I_abort and the suppression weights.
+    # Raising this materially slows strongly-suppressing configurations.
+    I_abort: float = 1e4
 
     # --- Solver / time ---
     tau_max:  float = 50.0
@@ -137,6 +188,7 @@ BOUNDS: Dict[str, Tuple[float, float]] = {
     "R_min":        (0.0, 1.0),
     "I_advanced":   (0.0, 100.0),
     "O_detectable": (0.0, 1.0),
+    "O_floor":      (0.0, 0.1),
     # Solver / time
     "tau_max":  (1.0, 500.0),
 }
@@ -150,7 +202,7 @@ PARAM_GROUPS: Dict[str, list[str]] = {
     "Shape parameters":       ["K", "lam", "k", "Ic"],
     "Detection":              ["kappa", "P_search", "P_surv", "N_true"],
     "Lambert":                ["eta", "E"],
-    "Thresholds":             ["Theta", "I_runaway", "R_min", "I_advanced", "O_detectable"],
+    "Thresholds":             ["Theta", "I_runaway", "R_min", "I_advanced", "O_detectable", "O_floor"],
     "Solver / Time":          ["tau_max"],
 }
 
@@ -188,6 +240,7 @@ PARAM_LABELS: Dict[str, str] = {
     "R_min": "R_min (minimum regulation)",
     "I_advanced": "I_advanced (advanced threshold)",
     "O_detectable": "O_detectable (detection floor)",
+    "O_floor": "O_floor (thermodynamic floor)",
     "tau_max": "τ_max (simulation time)",
 }
 

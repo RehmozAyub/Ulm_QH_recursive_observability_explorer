@@ -1,0 +1,19 @@
+# LaTeX build artefacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.toc
+*.synctex.gz
+p1.log
+p2.log
+p3.log
+p4.log
+bib.log
+build.log
+
+# regenerated intermediate data
+js_dump.json

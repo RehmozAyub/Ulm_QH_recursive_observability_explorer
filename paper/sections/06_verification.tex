@@ -1,0 +1,122 @@
+\section{The simulator, and how we checked it}
+\label{sec:verification}
+
+Models like this one are usually verified about as far as ``the code ran and the
+plots looked reasonable''. That is not enough here. Every conclusion in
+\S\ref{sec:results} is a statement about the \emph{shape} of a computed
+trajectory, so if the trajectory is wrong the conclusion is wrong, and it will
+be wrong in a way that still looks perfectly plausible on a screen. We therefore
+treat verification as part of the contribution rather than as housekeeping.
+
+\subsection{The simulator}
+
+The framework is packaged as an interactive simulator. Every driver, weight and
+threshold in Appendix~\ref{app:params} is exposed as a control; every entry in
+the registry of Table~\ref{tab:registry} is a menu selection; and the eight
+stage presets of \S\ref{sec:results} load with one click. Trajectories, the
+phase portrait, the regime label and the detection probability $\Pdet$ all
+update as the parameters move.
+
+We mention this because it is the part of the work that is hardest to convey on
+paper. A reader who suspects that some result here is an artefact of a
+particular parameter choice can go and drag the slider. The registry means that
+``does this conclusion survive a different functional form?'' takes a few
+seconds to answer instead of an afternoon of editing, and we would rather people
+attacked the model that way than took our word for it. The simulator runs in a
+browser with nothing to install; the address is given at the end of the paper.
+
+\subsection{Integration}
+
+The system \eqref{eq:dI}--\eqref{eq:dO} is integrated with an explicit adaptive
+Dormand--Prince Runge--Kutta method of order 5(4) with dense output
+\citep{dormand1980,virtanen2020scipy,harris2020numpy}, at relative tolerance
+$10^{-6}$ and absolute tolerance $10^{-9}$. All exponentials are
+argument-clipped to $[-50,50]$ to stop them overflowing.
+
+Two of the recursion kernels in Table~\ref{tab:registry} --- superlinear and
+exponential --- blow up in finite time: $\Icap$ genuinely diverges at a finite
+$\tau$. An adaptive stepper walking into a singularity takes smaller and smaller
+steps and never arrives, so integration stops on a terminal event when $\Icap$
+exceeds a bound $I_{\mathrm{abort}}$ set two orders of magnitude above the
+runaway threshold, and the remaining output samples hold the terminal state.
+
+That last detail is worth a sentence, because we got it wrong first. If you pad
+instead with the last \emph{output} sample, the recorded maximum can understate
+the divergence by orders of magnitude --- the singularity almost always falls
+between two samples, and the trajectory looks merely large rather than infinite.
+
+\subsection{Five independent oracles}
+
+Each check below tests the implementation against something that is not the
+implementation. Results are collected in Table~\ref{tab:verification}.
+
+\paragraph{A. Closed-form regulation.}
+Equation~\eqref{eq:dR} is linear in $\Reg$ and --- this is the useful part ---
+completely independent of $\Icap$ and $\Obs$. So it integrates exactly, giving
+$\Reg(\tau)=\Reg_\infty+(\Reg_0-\Reg_\infty)e^{-(B+W)\tau}$ with $\Reg_\infty$
+from Eq.~\eqref{eq:Rinf}. Every configuration reproduces it to
+$\leq 2.3\times10^{-6}$, which is what the requested tolerance should give.
+
+\paragraph{B. An independent high-order integrator.}
+Every configuration was integrated again with an eighth-order Dormand--Prince
+method at tolerances $10^{-12}/10^{-14}$ and compared against the production
+solver at its default settings. All twenty agree. For the two blow-up kernels
+the comparison stops at the abort event, since the reference integrator has no
+such guard and simply keeps going.
+
+\paragraph{C. Quadrature of the observability equation.}
+$\mathrm{d}\Obs/\mathrm{d}\tau$ was rebuilt from the computed $\Icap$ and $\Reg$
+and integrated by quadrature, which never touches the ODE solver's own treatment
+of $\Obs$. Agreement is $\leq 1.5\times10^{-4}$ on every non-singular
+configuration.
+
+\paragraph{D. The Lambert identity.}
+$\Icrit$ has to satisfy its own definition, $\Icrit e^{\Icrit} = C_R/(b\Arec)$.
+Across 576 parameter combinations and four values of $\Reg$ --- 2304 evaluations
+--- the largest relative residual is $4.4\times10^{-16}$, which is machine
+precision. The validity guard behaves as specified too, returning no boundary at
+all for any non-Lambert kernel.
+
+\paragraph{E. Property-based testing of the invariants.}
+This is the one that matters most. Propositions~\ref{prop:reg}
+and~\ref{prop:obs} claim \emph{structural} bounds, so they have to hold for
+arbitrary admissible parameters --- not for the eight presets we happened to
+tune. Three hundred randomised parameter sets were drawn across the full
+declared ranges, with randomised recursion kernels and randomised suppression
+forms. There were \textbf{no violations}: the global minimum observability came
+out at $2.16\times10^{-3}$, comfortably above the floor, and regulation stayed
+inside $[4.0\times10^{-3},\,0.999]$.
+
+A bound that held only for the configurations we chose would not be a bound. It
+would be a coincidence we had grown fond of. This test is the difference.
+
+\begin{table}[tb]
+\centering\small
+\caption{Verification results. Each oracle tests the implementation against
+something other than itself.}
+\label{tab:verification}
+\begin{tabular}{@{}clll@{}}
+\toprule
+ & Oracle & Scope & Result \\
+\midrule
+A & closed-form $\Reg(\tau)$              & 19 configurations & max error $2.3\times10^{-6}$ \\
+B & independent 8th-order integrator      & 20 configurations & 20/20 agree \\
+C & quadrature of $\mathrm{d}\Obs/\mathrm{d}\tau$ & 12 non-singular configurations & $\leq 1.5\times10^{-4}$ \\
+D & Lambert identity                      & 2304 evaluations  & $4.4\times10^{-16}$ \\
+E & structural invariants                 & 300 random configurations & \textbf{0 violations} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What this establishes, and what it does not}
+
+These checks establish that the equations we have written down are the equations
+being solved, and that they are being solved accurately. They establish exactly
+nothing about whether those equations describe a real civilization. Not one term
+here has been calibrated against data, for the excellent reason that no relevant
+data exist.
+
+The distinction between a model that is \emph{verified} and one that is
+\emph{validated} is worth keeping sharp, and it gets blurred constantly in this
+subject. We claim the first and make no claim at all to the second.
+\Established

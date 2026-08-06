@@ -1,0 +1,131 @@
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{The paradox is an inference problem}
+
+The universe is old, planets are everywhere, and a great many planetary systems
+were finished billions of years before ours got started
+\citep{lineweaver2001,borucki2016}. Nobody has ever confirmed a signal, a probe,
+an artefact, or an unambiguous technosignature. The tension between those two
+statements is what we call the Fermi paradox, and it usually gets compressed
+into three words: where is everybody? \citep{hart1975,brin1983silence,webb2015}
+
+Put that way, the question is misleading, because it quietly treats
+non-observation as evidence about existence. It is not. Non-observation
+constrains a \emph{product}: how many civilizations arise, how many last long
+enough to be technologically active, how strong a signature they put out, and
+whether anyone has yet pointed an instrument at the part of parameter space
+where that signature would show up \citep{gray2015,tarter2001,sheikh2020}. The
+sharper question is which assumptions would make an extraterrestrial
+technological civilization visible \emph{to us, now}.
+
+This is not a rhetorical distinction. It decides what a model of the paradox
+ought to vary. Almost every quantitative treatment, from Drake onward, varies
+the number of civilizations while holding detectability fixed --- usually
+bundled into a single lifetime parameter $L$ \citep{prantzos2013,prantzos2020}.
+We do the other thing. We hold abundance still and give detectability its own
+dynamics.
+
+\subsection{Existence, detectability, observation}
+
+Three quantities get conflated constantly, so we will separate them at the
+start:
+\begin{equation}
+  \Ntrue \;\geq\; \Ndet \;\geq\; \Nobs ,
+  \label{eq:threeN}
+\end{equation}
+the number of civilizations that exist, the number putting out signatures
+detectable in principle, and the number our searches have actually found. A
+civilization can exist without being detectable. It can be detectable in
+principle and never be observed, simply because nobody looked in the right
+place. \Established
+
+This framework modifies the middle term. It asks how a civilization's external
+observability changes as its capability, regulatory capacity, energy use,
+expansion behaviour and information efficiency change --- and in particular what
+happens when it crosses into recursive, self-improving technological capability.
+
+\subsection{Why recursive capability is the interesting transition}
+
+Something changes in kind when a civilization's tools start improving the
+process of making better tools. Automated discovery, engineering and design
+close a loop between capability and the \emph{rate of growth} of capability
+\citep{good1965,bostrom2014,russell2019}. Quantum computation enters this
+picture in exactly one way, and it is worth being precise about it: not as a
+separate phenomenon, but as one possible contributor to how fast that loop can
+turn, by accelerating the simulation, search and optimisation problems that gate
+technological progress \citep{shor1994,nielsen2010,preskill2018}. \Speculative
+
+A loop like that plausibly changes more than a growth rate. It may change
+information efficiency, and so signal leakage. It may change whether expansion
+looks worth doing. It may stretch or compress the window during which a
+civilization is loud. None of that is asserted here as fact. The model asks what
+\emph{follows} if such feedback occurs, and keeps the dependence on that
+assumption out in the open where it can be attacked.
+
+\subsection{What breaks if observability is modelled carelessly}
+
+Giving observability its own differential equation is easy to do badly, and the
+way it fails is instructive enough that we would rather report it than hide it.
+
+Suppose you write the terms representing compression, efficiency and deliberate
+quietness as an absolute subtraction --- a flux removed from $\Obs$ at a rate
+that does not depend on $\Obs$. Then nothing whatsoever prevents observability
+from sailing through zero and running off to large negative values. Worse, a
+trajectory that has done this still gets classified as ``quiet'', because the
+classifier only ever asks whether $\Obs$ is below a threshold, and $-1431$ is
+certainly below a threshold.
+
+That is not a coding slip. It is a modelling error, and it has a clean physical
+diagnosis: compression and stealth reduce the signal a civilization
+\emph{emits}. They are fractional reductions. You cannot suppress emissions that
+are not being made. Write them as fractional rates acting on the emitted signal,
+put in an explicit floor for the waste heat nobody can get rid of, and
+observability becomes bounded below by construction rather than by a clamp
+bolted on afterwards. We prove this as Proposition~\ref{prop:obs}, with the
+matching statement for regulatory capacity as Proposition~\ref{prop:reg}.
+
+The correction turns out to carry the main modelling result of the paper. Once
+suppression is fractional, the quasi-steady observability is a \emph{ratio} of
+production to suppression --- and peak-then-decline behaviour then follows
+automatically whenever suppression grows faster in capability than production
+does. It no longer has to be imposed by picking a peaked functional form. That
+matters, because a low-observability account of the Great Silence that assumes a
+peaked $\Obs(\Icap)$ has assumed its conclusion. One that derives the peak from
+two independently motivated mechanisms has not.
+
+\subsection{Contributions}
+
+\begin{enumerate}\itemsep3pt
+  \item An observability-aware decomposition
+    $\Nobs = \Ntrue\,\Psurv\,h(\Obs)\,\Psearch$ that separates survival, signal
+    production and search coverage, and says exactly where a dynamical
+    detectability model acts on the Drake equation (\S\ref{sec:decomp}).
+  \item A three-variable dynamical model of capability, regulation and
+    observability, built from mechanism balances, with two structural
+    guarantees --- $\Obs \geq \Ofloor$ and $\Reg \in [0,1]$ --- that hold by
+    construction and not by clamping (\S\ref{sec:model}).
+  \item Peak-then-decline observability as a \emph{derived} consequence of
+    suppression outgrowing production, rather than an assumed functional form
+    (\S\ref{sec:results}).
+  \item A registry architecture in which every functional form is
+    interchangeable, so that ``do the conclusions survive changing the
+    functions?'' becomes a menu selection instead of a rewrite
+    (\S\ref{sec:model}).
+  \item A verification protocol that is unusual in this literature: closed-form
+    solutions, an independent high-order integrator, quadrature, and
+    property-based testing over randomised parameter sets
+    (\S\ref{sec:verification}).
+  \item An explicitly negative result about the Lambert-$W$ threshold that
+    started this work: the balance justifying $W$ is not the balance governing
+    the system we integrate (\S\ref{sec:lambert}).
+\end{enumerate}
+
+\subsection{What this paper does not claim}
+
+It does not claim that extraterrestrial civilizations exist, that advanced
+civilizations go quiet, that recursive artificial intelligence causes collapse
+or transcendence, or that the Fermi paradox has been solved. Every substantive
+statement in what follows carries a strength label --- \Established, \Plausible,
+\Hypothetical{} or \Speculative{} --- and they are all collected in
+Table~\ref{tab:claims} so that nobody has to hunt for the weak ones.

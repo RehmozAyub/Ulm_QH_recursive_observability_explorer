@@ -1,0 +1,62 @@
+\section{Closed-form solutions}
+\label{app:closed}
+
+Two exact solutions exist and are used as verification oracles in
+\S\ref{sec:verification}.
+
+\subsection{Regulation}
+
+With constant drivers, Eq.~\eqref{eq:dR} is linear in $\Reg$ and independent of
+$\Icap$ and $\Obs$:
+\begin{equation}
+  \dd{\Reg}{\tau} = B - (B+W)\,\Reg ,
+  \qquad B = u\Aref + vQ, \quad W = w\Arec + s_R ,
+\end{equation}
+so that
+\begin{equation}
+  \Reg(\tau) \;=\; \Reg_\infty + \big(\Reg_0 - \Reg_\infty\big)\,e^{-(B+W)\tau},
+  \qquad \Reg_\infty = \frac{B}{B+W} .
+  \label{eq:Rclosed}
+\end{equation}
+Because $B,W \geq 0$ we have $\Reg_\infty \in [0,1]$ immediately, which is the
+substance of Proposition~\ref{prop:reg}. Equation~\eqref{eq:Rclosed} also gives
+the relaxation time $1/(B+W)$: regulation responds faster when either building or
+erosion is strong.
+
+\subsection{Capability in the reduced stage models}
+
+For stages~0--2 the regulatory damping term is inactive and recursive
+amplification is absent, so Eq.~\eqref{eq:dI} reduces to the logistic equation
+\begin{equation}
+  \dd{\Icap}{\tau} = aA\,\Icap - s_I \Icap^{2},
+\end{equation}
+with solution
+\begin{equation}
+  \Icap(\tau) = \frac{K_I}{1 + \left(\dfrac{K_I}{\Icap_0} - 1\right) e^{-aA\tau}},
+  \qquad K_I = \frac{aA}{s_I} .
+  \label{eq:logistic}
+\end{equation}
+With the stage-1 parameters ($a=0.30$, $A=1$, $s_I=0.10$, $\lambda=0.30$) this
+gives $K_I = 3.0$ exactly, and hence a limiting observability under model~A of
+\begin{equation}
+  \Obs_\infty = 1 - e^{-\lambda K_I} = 1 - e^{-0.9} = 0.5934 .
+\end{equation}
+Both are reproduced by the solver to four decimal places
+(Table~\ref{tab:stagecheck}), which is a stringent check because it tests the
+integrator, the parameter plumbing and the stage configuration simultaneously.
+
+\subsection{The general Bernoulli form}
+
+More generally, whenever recursive amplification is absent ($b\Arec = 0$),
+Eq.~\eqref{eq:dI} is a Bernoulli equation
+$\mathrm{d}\Icap/\mathrm{d}\tau = g(\tau)\Icap - s_I\Icap^{2}$ with
+$g(\tau) = aA - c\Reg(\tau)$. The substitution $z = 1/\Icap$ linearises it to
+$z' + g z = s_I$, giving
+\begin{equation}
+  \Icap(\tau) = \left[e^{-G(\tau)}\left(\frac{1}{\Icap_0}
+    + s_I\!\int_0^{\tau}\! e^{G(s)}\,\mathrm{d}s\right)\right]^{-1},
+  \qquad G(\tau) = \int_0^{\tau}\! g(s)\,\mathrm{d}s ,
+\end{equation}
+where $G$ is available in closed form because $\Reg$ is
+(Eq.~\eqref{eq:Rclosed}). This provides a quadrature-based check independent of
+the ODE solver.

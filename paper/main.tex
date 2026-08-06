@@ -1,0 +1,165 @@
+%% The Recursive Observability Filter
+%% arXiv preprint -- first draft
+%% Build:  latexmk -pdf main.tex     (or  make )
+
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}            % scalable outlines, not bitmaps, in the final PDF
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+% Ragged-right paragraph column: narrow table cells justify badly.
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{xcolor}
+\usepackage[font=small,labelfont=bf,skip=6pt]{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{microtype}          % tightens justification; kills most overfull lines
+\usepackage[round,authoryear]{natbib}
+\usepackage[colorlinks=true,allcolors=blue!60!black]{hyperref}
+
+% ------------------------------------------------------- page discipline
+% No single line of a paragraph left stranded at a page boundary, and no
+% figure allowed to strand the text that introduces it.
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.70}
+\renewcommand{\textfraction}{0.12}
+\renewcommand{\floatpagefraction}{0.72}
+\setlength{\emergencystretch}{2em}
+
+% ---------------------------------------------------------------- notation
+\newcommand{\Icap}{I}                 % capability
+\newcommand{\Reg}{R}                  % regulation
+\newcommand{\Obs}{O}                  % observability
+\newcommand{\Icrit}{I_{\mathrm{crit}}}
+\newcommand{\Ofloor}{O_{\mathrm{floor}}}
+\newcommand{\Odet}{O_{\mathrm{detectable}}}
+\newcommand{\Arec}{A_{\mathrm{rec}}}
+\newcommand{\Aref}{A_{\mathrm{ref}}}
+\newcommand{\Ntrue}{N_{\mathrm{true}}}
+\newcommand{\Ndet}{N_{\mathrm{detectable}}}
+\newcommand{\Nobs}{N_{\mathrm{obs}}}
+\newcommand{\Psurv}{P_{\mathrm{surv}}}
+\newcommand{\Psearch}{P_{\mathrm{search}}}
+\newcommand{\Pdet}{P_{\mathrm{det}}}
+\newcommand{\Rmin}{R_{\mathrm{min}}}
+\newcommand{\Iadv}{I_{\mathrm{advanced}}}
+\newcommand{\dd}[2]{\frac{\mathrm{d}#1}{\mathrm{d}#2}}
+
+% claim-strength tags
+\definecolor{estab}{HTML}{1B7837}
+\definecolor{plaus}{HTML}{2166AC}
+\definecolor{hypo}{HTML}{B8860B}
+\definecolor{spec}{HTML}{B2182B}
+\newcommand{\Established}{{\color{estab}\textsc{[established]}}}
+\newcommand{\Plausible}{{\color{plaus}\textsc{[plausible]}}}
+\newcommand{\Hypothetical}{{\color{hypo}\textsc{[hypothetical]}}}
+\newcommand{\Speculative}{{\color{spec}\textsc{[speculative]}}}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\title{\bfseries The Recursive Observability Filter:\\
+A Dynamical-Systems Framework for Civilizational\\ Detectability and the Fermi Paradox}
+
+\author{%
+  Muhammad Rehmoz Salahuddin Ayub\,\textsuperscript{1}\quad
+  Dilawaiz Saghir\,\textsuperscript{2}\quad
+  Raiker Witter\,\textsuperscript{1}\\[5pt]
+  \small \textsuperscript{1}Ulm University, Ulm, Germany\\
+  \small \textsuperscript{2}Freie Universit\"at Berlin, Berlin, Germany\\[3pt]
+  \small Corresponding author: \texttt{mohammadrehmozayub@gmail.com}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Nearly every quantitative treatment of the Fermi paradox varies how \emph{many}
+civilizations there are while holding fixed how easy they are to see. We do the
+opposite. Detectability gets its own equation of motion, and abundance is left
+alone.
+
+The \emph{Recursive Observability Filter} couples three quantities in
+dimensionless time --- an effective capability $\Icap$, a regulatory capacity
+$\Reg$, and an external observability $\Obs$ --- inside the decomposition
+$\Nobs=\Ntrue\,\Psurv\,h(\Obs)\,\Psearch$, which keeps existence, signal
+production and search coverage from being confused with one another. Two
+properties hold by construction rather than by clamping, and we prove both:
+observability can never fall below a thermodynamic floor, and regulatory
+capacity can never leave the unit interval.
+
+One consequence is the main result. Peak-then-decline observability is the
+signature that low-observability accounts of the Great Silence normally assume;
+here it is not assumed. Because the quasi-steady observability is a
+\emph{ratio} of production to suppression, the decline appears on its own
+whenever suppression grows faster in capability than production does. Nobody
+has to put it in by hand.
+
+We also report a failure. The Lambert-$W$ threshold that motivated this work is
+not a property of the system we integrate: the natural balance cancels $\Icap$
+and leaves a logarithm, so the Lambert boundary survives only under a separate
+balance we have to declare. Nothing here depends on it.
+
+The model is checked against closed-form solutions, an independent high-order
+integrator, quadrature of the observability equation, and property-based testing
+over 300 randomised parameter sets, with no violations of either bound. An
+interactive simulator runs the whole framework in a browser. We do not claim to
+have solved the Fermi paradox. The contribution is a transparent and falsifiable
+place to work out what assumptions about recursive intelligence, regulation and
+observability actually imply --- and where they break, to watch them break.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Fermi paradox; Drake equation; technosignatures;
+detectability; recursive intelligence; nonlinear dynamics; Lambert $W$;
+astrobiology; model verification
+
+\vspace{1em}
+
+\input{sections/01_introduction}
+\input{sections/02_background}
+\input{sections/03_decomposition}
+\input{sections/04_model}
+\input{sections/05_lambert}
+\input{sections/06_verification}
+\input{sections/07_results}
+\input{sections/08_discussion}
+\input{sections/09_limitations}
+\input{sections/10_conclusions}
+
+\section*{Data and code availability}
+The simulator runs in a browser, with no installation and nothing to configure,
+at \url{https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/}.
+Every preset discussed in \S\ref{sec:results} is reachable from its menu, and
+every parameter in Appendix~\ref{app:params} is exposed as a slider, so any
+claim made here can be pushed until it fails.
+
+Source, verification harness and the script that regenerates every data figure
+are at
+\url{https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer}.
+\textit{[Mint a Zenodo DOI before submission and cite it here.]}
+
+\section*{Acknowledgements}
+This work began at the Ulm University Quantum Hackathon, June 2026.
+
+\clearpage
+\appendix
+\input{sections/appendix_a_notation}
+\input{sections/appendix_b_closed_forms}
+\input{sections/appendix_c_parameters}
+\input{sections/appendix_d_verification}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

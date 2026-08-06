@@ -1,0 +1,50 @@
+\section{Notation}
+\label{app:notation}
+
+Every symbol used in the paper, in the order the variables, drivers,
+coefficients and derived quantities are introduced.
+
+% Deliberately not a float: a bare table in a section with no body text
+% drifts to the following page and leaves the heading stranded.
+\begin{center}
+\small
+\begin{tabular}{@{}llL{7.6cm}@{}}
+\toprule
+Symbol & Type & Meaning \\
+\midrule
+$\tau$        & --- & dimensionless time \\
+$\Icap$       & state & effective capability \\
+$\Reg$        & state & regulatory quality index, $\Reg\in[0,1]$ \\
+$\Obs$        & state & external observability, $\Obs\geq\Ofloor$ \\
+\midrule
+$A$           & driver & ordinary amplification pressure \\
+$\Arec$       & driver & recursive amplification \\
+$\Aref$       & driver & reflective amplification \\
+$Q$           & driver & institutional quality \\
+\midrule
+$a,b,c,s_I$   & coeff. & ordinary growth, recursive growth, regulatory damping, saturation \\
+$u,v,w,s_R$   & coeff. & reflective learning, institutional gain, erosion, decay \\
+$p,q,r$       & coeff. & energy-use, broadcast and expansion weights \\
+$m,n$         & coeff. & compression and stealth suppression \emph{rates} \\
+\midrule
+$F(\Icap)$    & function & recursion kernel \\
+$\Pi(\Icap)$  & function & total signature production, $pE+qB_{\mathrm c}+rX$ \\
+$\Sigma(\Icap,\Reg)$ & function & total fractional suppression rate, $mC+nS$ \\
+$h(\Obs)$     & function & detection map, $1-e^{-\kappa \Obs}$ \\
+\midrule
+$B, W$        & derived & regulation building and erosion aggregates, Eq.~\eqref{eq:dR} \\
+$\Reg_\infty$ & derived & regulation equilibrium, $B/(B+W)$ \\
+$\Obs^{*}$    & derived & quasi-steady observability, Eq.~\eqref{eq:Ostar} \\
+$C_R$         & derived & auxiliary regulation capacity, Eq.~\eqref{eq:CR} \\
+$\Icrit$      & derived & auxiliary Lambert boundary, Eq.~\eqref{eq:Icrit} \\
+\midrule
+$\Ntrue,\Ndet,\Nobs$ & counts & existing, detectable, observed civilizations \\
+$\Psurv,\Pdet,\Psearch$ & prob. & survival, detection, search coverage \\
+$\kappa$      & param & detection sensitivity \\
+$\Ofloor,\Odet$ & param & thermodynamic floor; detection threshold \\
+$\Iadv,\Rmin,\Theta$ & param & capability, regulation and runaway thresholds \\
+$\eta,\mathcal{E}$ & param & regulation exponent; alignment factor (Lambert case) \\
+$W(\cdot)$    & function & Lambert $W$, principal branch \\
+\bottomrule
+\end{tabular}
+\end{center}
