@@ -12,7 +12,7 @@ coupled differential equations for watching that visibility rise, peak, or fade.
 
 ---
 
-## ▶ Try it in your browser — nothing to install
+## Try it in your browser
 
 **<https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/>**
 
