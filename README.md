@@ -1,21 +1,42 @@
 # Recursive Observability Explorer
 
-**Ulm University Quantum Hackathon — June 2026**
+**A dynamical-systems framework for civilizational detectability and the Fermi Paradox.**
+Built for the Ulm University Quantum Hackathon, 2026.
 
-A dynamical-systems simulation for the [Fermi Paradox](https://en.wikipedia.org/wiki/Fermi_paradox), built around the *Recursive Observability Filter* framework. The central question is not just *"how many civilizations exist?"* but *"how does detectability evolve as a civilization passes through stages of recursive intelligence?"*
+[![License: MIT](https://img.shields.io/badge/License-MIT-e0a24c.svg)](LICENSE)
+&nbsp;·&nbsp; [Live simulator](https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/)
+&nbsp;·&nbsp; [Paper (PDF)](paper/main.pdf)
 
-### ▶ Run it in your browser — nothing to install
+The Fermi Paradox is usually argued as a question of *number*: how many
+civilizations exist? This project reframes it as a question of *visibility*: how
+does a civilization's detectability evolve as it grows more capable, and would we
+ever catch it? The **Recursive Observability Filter (ROF)** is a small system of
+coupled differential equations for watching that visibility rise, peak, or fade.
 
-**<https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/>**
-
-Every stage preset loads with one click and every parameter is a slider.
-See [Deploying the simulator](#deploying-the-simulator) if the link is not live yet.
-
-The accompanying paper is in [`paper/main.pdf`](paper/main.pdf).
+> This is a modeling framework, not a solution to the Fermi Paradox.
 
 ---
 
-## The Core Idea
+## ▶ Try it in your browser — nothing to install
+
+**<https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/>**
+
+An interactive, single-page simulator. Pick a civilization stage or tune any
+parameter with a slider and the model re-solves live. It runs entirely in the
+browser (no backend) and features:
+
+- **Six linked views** — trajectories, the (I, O) phase diagram, the Lambert-W
+  boundary, the four observability functions, the full regime decision trace, and
+  the Drake decomposition.
+- **A 3D state-space view** of the (I, R, O) trajectory you can orbit and zoom.
+- **Plain-language interpretations** on every view (for example *"grew loud, then
+  went quiet"* or *"past the critical line"*), driven by the current values.
+- **A synthesised findings paragraph** that reads out what this exact parameter
+  set means, with the numbers, and a one-click copy.
+
+---
+
+## The core idea
 
 Classical approaches conflate three distinct quantities:
 
@@ -23,26 +44,34 @@ Classical approaches conflate three distinct quantities:
 N_true  ≥  N_detectable  ≥  N_observed
 ```
 
-A civilization can **exist** without being detectable, and be detectable without being **observed**. This project models all three separately via a coupled ODE system:
+A civilization can **exist** without being detectable, and be detectable without
+being **observed**. The ROF models all three separately through a coupled ODE
+system over capability `I`, regulation `R`, and observability `O`, in
+dimensionless time `τ`:
 
 | Equation | Meaning |
 |---|---|
 | `dI/dτ = a·A·I + b·A_rec·F(I) − c·R·I − s_I·I²` | Capability growth, recursive amplification, regulatory damping |
 | `dR/dτ = (u·A_ref + v·Q)·(1 − R) − (w·A_rec + s_R)·R` | Regulation built on remaining headroom, eroded in proportion to what exists |
-| `dO/dτ = p·E + q·B + r·X − (O − O_floor)·(m·C + n·S)` | Observability driven by energy/broadcast/expansion, suppressed **fractionally** above a thermodynamic floor |
+| `dO/dτ = p·E + q·B + r·X − (O − O_floor)·(m·C + n·S)` | Observability from energy/broadcast/expansion, suppressed fractionally above a thermodynamic floor |
 
-Detection chain: `N_obs = N_true · P_surv · h(O) · P_search`
+Detection chain: `N_obs = N_true · P_surv · h(O) · P_search`.
 
-The `R` and `O` equations are written this way on purpose. Erosion must be
-proportional to the regulation that exists, and suppression must act on the
-signal actually being emitted — you cannot suppress emissions that are not being
-made. Together these bound `R ∈ [0,1]` and `O ≥ O_floor` **by construction**
-rather than by clamping. See `CHANGELOG.md` for the earlier forms and why they
-failed.
+The `R` and `O` equations are written so that erosion is proportional to the
+regulation that exists and suppression acts only on the signal actually emitted.
+Together these bound `R ∈ [0, 1]` and `O ≥ O_floor` **by construction** rather
+than by clamping. See [`CHANGELOG.md`](CHANGELOG.md) for the earlier forms and why
+they failed.
+
+### The Lambert filter (special case)
+
+When `F(I) = I·eᴵ`, the capability threshold becomes `I·eᴵ = C`, solved exactly by
+the **Lambert W function**: `I_crit = W(C)`. The code enforces this through a
+validity guard so that W is never used decoratively.
 
 ---
 
-## Civilizational Stages
+## Civilizational stages
 
 | Stage | Name | Observability behaviour |
 |---|---|---|
@@ -55,120 +84,16 @@ failed.
 | 4c | Optimized low-observable | Declining — efficiency, directed comms |
 | 5 | Post-biological / unknown | Poorly constrained — speculative |
 
----
-
-## The Lambert Filter (Special Case)
-
-When `F(I) = I·eᴵ`, the capability threshold becomes `I·eᴵ = C`, solved exactly by the **Lambert W function**: `I_crit = W(C)`. The code enforces this via `lambert_is_valid()` — W is never used decoratively.
-
----
-
-## Project Structure
-
-```
-recursive_observability_explorer/
-│
-├── app.py                  # Streamlit entry point
-├── requirements.txt
-│
-├── model/
-│   ├── config.py           # ModelParams dataclass — all coefficients and selectors
-│   ├── system.py           # ODE right-hand side (rhs)
-│   ├── functions.py        # F(I), O(I), detection chain, component term registries
-│   ├── lambert.py          # Lambert W boundary, validity guard
-│   ├── solver.py           # scipy RK45 solver, Result dataclass
-│   ├── regimes.py          # Regime classifier (7 regimes)
-│   ├── stages.py           # 8 stage presets (S0–S5 including 4a/4b/4c)
-│   └── drake.py            # Drake equation decomposition
-│
-├── ui/
-│   ├── sidebar.py          # Sliders, presets, function selectors
-│   └── tabs.py             # Tab renderers + claim-strength legend
-│
-├── viz/
-│   └── plots.py            # Plotly figures — Plot 1–5 + observability functions
-│
-└── tests/
-    ├── test_system.py      # RHS finiteness, F_key switching, dynamic vs static mode
-    └── test_regimes.py     # Each preset integrates and returns the expected regime label
-```
-
----
-
-## Quick Start
-
-```bash
-git clone https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer.git
-cd Ulm_QH_recursive_observability_explorer/recursive_observability_explorer
-pip install -r requirements.txt
-pytest
-streamlit run app.py
-```
-
-The app opens at `http://localhost:8501`.
-
----
-
-## Deploying the simulator
-
-The `web_html_version/` directory is a self-contained static site — plain HTML,
-CSS and JavaScript, no build step and no server-side code. That makes GitHub
-Pages the natural place to host it, and it is free for public repositories.
-
-`.github/workflows/pages.yml` in this repository already does the publishing.
-It needs **one manual step**, because GitHub will not enable Pages for you:
-
-1. Go to **Settings → Pages** in the repository on github.com.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. Push to `main` (or open **Actions → Deploy simulator to GitHub Pages → Run
-   workflow** to trigger it by hand).
-
-The site then appears at
-
-```
-https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/
-```
-
-and redeploys automatically on every push to `main`.
-
-**Why a workflow rather than the simpler "deploy from a branch" option?**
-Branch-based Pages can only serve the repository root or a folder named `docs/`.
-The simulator lives in `web_html_version/`, so serving it that way would mean
-either moving the directory or duplicating it. The workflow just uploads that
-one directory as the site root, which keeps the repository layout intact.
-
-**Note on external resources.** The page loads KaTeX, Plotly and Google Fonts
-from CDNs, so a viewer needs internet access. That is fine for a hosted link.
-If you ever need it to work fully offline, vendor those three dependencies into
-`web_html_version/` and switch the `<script>`/`<link>` tags to relative paths.
-
----
-
-## Plots
-
-| Plot | What it shows |
-|---|---|
-| 1 — Capability & Regulation | `I(τ)` vs `R(τ)` — does capability outrun regulation? |
-| 2 — Observability | `O(τ)` under the chosen observability model |
-| 3 — Detected Population | `N_obs` and `P_det` — the full detection chain |
-| 4 — Phase Diagram | `I` vs `R` state space with regime regions |
-| 5 — Lambert Boundary | `I_crit = W(C)` contour over `(R, A_rec)` grid |
-| Obs Functions | Side-by-side comparison of Models A–D |
-
----
-
-## Observability Models
+### Observability models
 
 | Model | Formula | Behaviour |
 |---|---|---|
 | A — increasing | `1 − exp(−λI)` | Rises monotonically with capability |
-| B — decreasing | `exp(−λI)` | Falls monotonically — compression/stealth |
+| B — decreasing | `exp(−λI)` | Falls monotonically — compression / stealth |
 | C — peaked | `I · exp(−λI)` | Rises during expansion, falls after optimization |
-| D — threshold | `sigmoid(±k(I − Ic))` | Step-like transition at capability threshold |
+| D — threshold | `sigmoid(±k(I − Ic))` | Step-like transition at a capability threshold |
 
----
-
-## Regime Classification
+### Regime classification
 
 | Regime | Condition | Claim strength |
 |---|---|---|
@@ -180,31 +105,97 @@ If you ever need it to work fully offline, vendor those three dependencies into
 | `runaway` | `I > I_runaway` | 🔴 Speculative |
 | `uncertain` | None of the above | 🔵 Plausible |
 
-All claims in the UI are labeled **Established / Plausible / Hypothetical / Speculative** per the dossier's claim-strength rubric.
+Every output in the interface is labeled **Established / Plausible / Hypothetical
+/ Speculative** per the paper's claim-strength rubric.
 
 ---
 
-## Dependencies
+## Repository structure
 
-| Package | Min version |
-|---|---|
-| streamlit | 1.36 |
-| numpy | 1.26 |
-| scipy | 1.13 |
-| plotly | 5.22 |
-| pandas | 2.2 |
-| pytest | 8.2 |
-
----
-
-## Scientific Framing
-
-This is a **modeling framework**, not a solution to the Fermi Paradox. It asks:
-
-> *Which assumptions about recursive intelligence, regulation, and observability produce cosmic silence — and which produce visible civilizations?*
-
-Every significant output is labeled by claim strength. The model does not assert civilizations must become invisible; it asks what follows **if** recursive feedback occurs and **if** observability changes with capability.
+```
+.
+├── web_html_version_brutalist/   # The interactive simulator (this is what is deployed)
+│   ├── index.html                #   welcome page  ·  explorer.html  ·  guide.html
+│   ├── css/  js/                 #   vanilla JS + Plotly + three.js + KaTeX (via CDN)
+│   └── README.md
+├── web_html_version/             # Earlier build of the browser simulator (kept for history)
+├── recursive_observability_explorer/   # Python / Streamlit reference implementation
+│   ├── app.py                    #   Streamlit entry point
+│   ├── model/                    #   ODE system, solver, Lambert boundary, regimes, Drake
+│   ├── ui/  viz/                 #   sidebar, tabs, Plotly figures
+│   └── tests/                    #   RHS + regime tests (pytest)
+├── paper/                        # LaTeX source and compiled PDF of the write-up
+├── CHANGELOG.md                  # Model history: earlier equation forms and why they changed
+└── The_Fermi_Paradox_v3.md       # Extended background dossier
+```
 
 ---
 
-*Built for the Ulm University Quantum Hackathon, June 2026.*
+## Running locally
+
+### The browser simulator (no build step)
+
+```bash
+git clone https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer.git
+cd Ulm_QH_recursive_observability_explorer/web_html_version_brutalist
+python -m http.server 8000
+# then open http://localhost:8000/
+```
+
+It needs internet access, because KaTeX, Plotly, three.js and the fonts load from
+CDNs. To run fully offline, vendor those dependencies into the folder and switch
+the `<script>` / `<link>` tags to relative paths.
+
+### The Python reference model
+
+```bash
+cd recursive_observability_explorer
+pip install -r requirements.txt
+pytest                # verify the model
+streamlit run app.py  # opens at http://localhost:8501
+```
+
+The browser build mirrors this Python model; its adaptive RK45 solver and Lambert
+W implementation are cross-checked against the SciPy reference.
+
+---
+
+## The paper
+
+The write-up is in [`paper/main.pdf`](paper/main.pdf), with LaTeX source under
+`paper/`. Extended background is in [`The_Fermi_Paradox_v3.md`](The_Fermi_Paradox_v3.md).
+
+### Citation
+
+If you use this framework or simulator, please cite it. Update the author list to
+match the paper before publishing:
+
+```bibtex
+@misc{recursive_observability_explorer_2026,
+  title        = {Recursive Observability Explorer: A Dynamical-Systems Framework
+                  for Civilizational Detectability, Recursive Intelligence, and the
+                  Fermi Paradox},
+  author       = {{The Recursive Observability Explorer authors}},
+  year         = {2026},
+  howpublished = {\url{https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer}},
+  note         = {Ulm University Quantum Hackathon}
+}
+```
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE) — free to use, modify, and redistribute
+with attribution. This permissive license is chosen to encourage reproduction and
+reuse of the model alongside the paper. The compiled paper and its figures remain
+the intellectual work of the authors; if you reuse the text or figures, cite the
+paper as above.
+
+---
+
+## Acknowledgements
+
+Built for the **Ulm University Quantum Hackathon, 2026**. The model is a framework
+for reasoning about detectability, not a claim about what extraterrestrial
+civilizations actually do.

@@ -1,6 +1,6 @@
 name: Deploy simulator to GitHub Pages
 
-# Publishes web_html_version/ as the project website, so the simulator is
+# Publishes web_html_version_brutalist/ as the project website, so the simulator is
 # reachable at
 #   https://rehmozayub.github.io/Ulm_QH_recursive_observability_explorer/
 #
@@ -38,7 +38,7 @@ jobs:
       - name: Upload the simulator directory
         uses: actions/upload-pages-artifact@v3
         with:
-          path: web_html_version
+          path: web_html_version_brutalist
 
       - name: Deploy
         id: deployment
