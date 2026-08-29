@@ -167,15 +167,13 @@ The write-up is in [`paper/main.pdf`](paper/main.pdf), with LaTeX source under
 
 ### Citation
 
-If you use this framework or simulator, please cite it. Update the author list to
-match the paper before publishing:
+If you use this framework or simulator, please cite:
 
 ```bibtex
-@misc{recursive_observability_explorer_2026,
-  title        = {Recursive Observability Explorer: A Dynamical-Systems Framework
-                  for Civilizational Detectability, Recursive Intelligence, and the
-                  Fermi Paradox},
-  author       = {{The Recursive Observability Explorer authors}},
+@misc{ayub2026recursive,
+  title        = {The Recursive Observability Filter: A Dynamical-Systems Framework
+                  for Civilizational Detectability and the Fermi Paradox},
+  author       = {Ayub, Muhammad Rehmoz Salahuddin and Saghir, Dilawaiz and Witter, Raiker},
   year         = {2026},
   howpublished = {\url{https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer}},
   note         = {Ulm University Quantum Hackathon}
