@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recursive Observability Explorer — Welcome</title>
+  <meta name="description" content="Welcome to the Recursive Observability Explorer: an interactive deep-space simulator for exploring the Fermi Paradox through the Recursive Observability Filter (ROF) dynamical-systems model." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070810'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%23e0a24c' stroke-width='2'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' fill='none' stroke='%23e0a24c' stroke-width='1.4' transform='rotate(28 16 16)'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <nav class="topbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="8.5" stroke="currentColor" stroke-width="3"/>
+        <ellipse cx="32" cy="32" rx="27" ry="11" stroke="currentColor" stroke-width="2.4" transform="rotate(28 32 32)"/>
+      </svg>
+      <span>ROF Explorer</span>
+    </a>
+    <div class="topbar-links">
+      <a href="guide.html">How to use</a>
+      <a class="primary" href="explorer.html">Launch</a>
+    </div>
+  </nav>
+
+  <div class="lander-wrap">
+    <!-- HERO -->
+    <header class="lhero">
+      <svg class="logo-xl spin-slow rise" viewBox="0 0 64 64" fill="none" aria-label="Recursive Observability Explorer logo" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="9" stroke="currentColor" stroke-width="2.6"/>
+        <ellipse cx="32" cy="32" rx="27" ry="11" stroke="currentColor" stroke-width="2" transform="rotate(28 32 32)" style="opacity:.7"/>
+        <ellipse cx="32" cy="32" rx="20" ry="7.5" stroke="currentColor" stroke-width="1.5" transform="rotate(-18 32 32)" style="opacity:.45"/>
+        <circle cx="54" cy="20" r="2.4" fill="currentColor"/>
+      </svg>
+      <h1 class="rise d1">Recursive<br />Observability<br /><span class="amber">Explorer</span></h1>
+      <p class="lead rise d2">A dynamical-systems lens on the Fermi Paradox. Solve the model live and watch a civilisation become visible across the cosmos, or vanish before anyone looks.</p>
+      <div class="cta-row rise d3">
+        <a class="btn-cta primary" href="explorer.html">Launch the Explorer <span class="arrow">&rarr;</span></a>
+        <a class="btn-cta ghost" href="guide.html">How to use</a>
+      </div>
+      <p class="microline rise d4">Everything runs live in your browser: the ODE solver, the regime classifier, the Lambert-W boundaries and the Drake decomposition.</p>
+    </header>
+
+    <!-- WHAT YOU CAN DO — editorial index, not cards -->
+    <section class="lsection">
+      <div class="lsection-head reveal">
+        <h2 class="section-head">One model, six ways to read it</h2>
+        <p class="section-note">Every view is the same live solution, shown from a different angle.</p>
+      </div>
+      <ol class="index-list">
+        <li class="index-row reveal"><span class="ix-num">01</span><span class="ix-name">Trajectories</span><span class="ix-desc">Capability, regulation, observability and the detected population as they evolve over time.</span></li>
+        <li class="index-row reveal"><span class="ix-num">02</span><span class="ix-name">Phase Diagram</span><span class="ix-desc">The path through capability and observability space, with the regime regions shaded behind it.</span></li>
+        <li class="index-row reveal"><span class="ix-num">03</span><span class="ix-name">Lambert Boundary</span><span class="ix-desc">The critical-capability contour, and where your current settings sit relative to it.</span></li>
+        <li class="index-row reveal"><span class="ix-num">04</span><span class="ix-name">Observability Functions</span><span class="ix-desc">The four shapes observability can take with capability, with the active one highlighted.</span></li>
+        <li class="index-row reveal"><span class="ix-num">05</span><span class="ix-name">Regime Analysis</span><span class="ix-desc">The step-by-step reasoning that sorts a trajectory into one of seven civilisation regimes.</span></li>
+        <li class="index-row reveal"><span class="ix-num">06</span><span class="ix-name">Drake Decomposition</span><span class="ix-desc">The classical Drake count set beside the smaller number this model actually predicts.</span></li>
+      </ol>
+    </section>
+
+    <!-- HOW IT WORKS — stepped flow, not boxes -->
+    <section class="lsection">
+      <div class="lsection-head reveal">
+        <h2 class="section-head">Three steps to a verdict</h2>
+        <p class="section-note">Set a scenario, let it solve, read what comes back.</p>
+      </div>
+      <ol class="stepflow">
+        <li class="step reveal"><span class="step-n">1</span><div class="step-body"><h3>Set the scenario</h3><p>Pick a civilisation stage, or tune the parameters and starting conditions yourself.</p></div></li>
+        <li class="step reveal" style="--d:.08s"><span class="step-n">2</span><div class="step-body"><h3>Let it solve</h3><p>An adaptive solver runs the three equations and re-solves the instant you move a slider.</p></div></li>
+        <li class="step reveal" style="--d:.16s"><span class="step-n">3</span><div class="step-body"><h3>Read the verdict</h3><p>You get a regime, a confidence label, and the exact thresholds that decided it.</p></div></li>
+      </ol>
+      <div class="cta-row reveal" style="margin-top:36px">
+        <a class="btn-cta primary" href="explorer.html">Launch the Explorer <span class="arrow">&rarr;</span></a>
+        <a class="btn-cta ghost" href="guide.html">Read how to use it</a>
+      </div>
+      <p class="microline reveal" style="--d:.1s;margin-top:20px">A modeling framework, not a solution to the Fermi Paradox.</p>
+    </section>
+  </div>
+
+  <footer class="site-foot">
+    <div>Built from
+      <a href="https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer" target="_blank" rel="noopener">RehmozAyub/Ulm_QH_recursive_observability_explorer</a>
+      — Ulm University Quantum Hackathon, June 2026
+    </div>
+    <div class="fdisc">A modeling framework, not a solution to the Fermi Paradox.</div>
+  </footer>
+
+  <script src="js/background.js"></script>
+  <script src="js/motion.js"></script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recursive Observability Explorer — Simulator</title>
+  <meta name="description" content="An interactive dynamical-systems simulator for the Fermi Paradox: the Recursive Observability Filter model, with live ODE solving, regime classification, Lambert-W boundaries and Drake decomposition." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+  <!-- three.js (UMD global THREE) for the WebGL 3D view -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070810'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%23e0a24c' stroke-width='2'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' fill='none' stroke='%23e0a24c' stroke-width='1.4' transform='rotate(28 16 16)'/%3E%3C/svg%3E" />
+</head>
+<body class="explorer-body">
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <nav class="topbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="8.5" stroke="currentColor" stroke-width="3"/>
+        <ellipse cx="32" cy="32" rx="27" ry="11" stroke="currentColor" stroke-width="2.4" transform="rotate(28 32 32)"/>
+      </svg>
+      <span>ROF Explorer</span>
+    </a>
+    <div class="topbar-links">
+      <a href="index.html">Overview</a>
+      <a href="guide.html">How to use</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <p class="eyebrow">ROF // dynamical-systems observatory</p>
+    <div class="logo-row">
+      <svg class="logo" viewBox="0 0 64 64" fill="none" aria-label="Recursive Observability Explorer logo" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="8.5" stroke="currentColor" stroke-width="2.4" style="color:var(--accent)"/>
+        <ellipse cx="32" cy="32" rx="27" ry="11" stroke="currentColor" stroke-width="1.8" transform="rotate(28 32 32)" style="color:var(--text-dim)"/>
+        <ellipse cx="32" cy="32" rx="20" ry="7.5" stroke="currentColor" stroke-width="1.4" transform="rotate(-18 32 32)" style="color:var(--text-faint)"/>
+        <circle cx="54" cy="20" r="2" fill="currentColor" style="color:var(--accent)"/>
+      </svg>
+      <h1>Recursive Observability Explorer</h1>
+    </div>
+    <p class="subtitle">A dynamical-systems lens on the Fermi Paradox — Ulm Quantum Hackathon 2026. Solve the ROF system live, classify the civilisation regime, and trace where an in-principle population collapses to an actually-observed one.</p>
+    <span class="disclaimer">A modeling framework, not a solution to the Fermi Paradox.</span>
+  </header>
+
+  <div class="wrap">
+    <!-- The model (collapsible, KaTeX equations) — crisp; detail lives in guide.html -->
+    <details class="about glass" style="margin:20px 0">
+      <summary>The model — Recursive Observability Filter (ROF)</summary>
+      <div class="eq-block">
+        <p class="panel-sub">Three coupled ODEs in dimensionless time τ over <em>y</em> = [<em>I</em>, <em>R</em>, <em>O</em>] — capability, regulation, observability. <a class="eq-link" href="guide.html">Full walkthrough &rarr;</a></p>
+        <div class="katex-line" data-eq="\frac{dI}{d\tau} = a\,A\,I + b\,A_{rec}\,F(I) - c\,R\,I - s_I\,I^2"></div>
+        <div class="katex-line" data-eq="\frac{dR}{d\tau} = u\,A_{ref} + v\,Q - w\,A_{rec} - s_R\,R"></div>
+        <div class="katex-line" data-eq="\frac{dO}{d\tau} = p\,E(I,R) + q\,B(I,R) + r\,X(I,R) - m\,C(I,R) - n\,S(I,R)"></div>
+        <div class="eq-row">
+          <span class="eq-tag">Detection</span>
+          <div class="katex-line" data-eq="h(O) = 1 - e^{-\kappa\,\max(O,0)},\quad N_{obs} = N_{true}\cdot P_{surv}\cdot h(O)\cdot P_{search}"></div>
+        </div>
+        <div class="eq-row">
+          <span class="eq-tag">Hierarchy</span>
+          <div class="katex-line" data-eq="N_{true}\;\geq\;N_{detectable}\;\geq\;N_{observed}"></div>
+        </div>
+        <div class="eq-row">
+          <span class="eq-tag">Lambert-W · F = lambert</span>
+          <div class="katex-line" data-eq="I_{crit} = W\!\left(\frac{C_R}{b\,A_{rec}}\right),\quad C_R = c\,R^{\eta}\ln(1+A_{ref})\,E"></div>
+        </div>
+      </div>
+    </details>
+
+    <div class="app-grid">
+      <!-- ================= SIDEBAR ================= -->
+      <aside class="sidebar glass">
+        <p class="side-title">Stage preset</p>
+        <div class="field">
+          <select id="stage-select" aria-label="Stage preset"></select>
+        </div>
+
+        <p class="side-title">Model functions</p>
+        <div class="selectors-grid">
+          <div class="field"><label for="F_key">F(I) recursion</label><select id="F_key"></select></div>
+          <div class="field"><label for="O_key">O(I) static</label><select id="O_key"></select></div>
+          <div class="field"><label for="obs_mode">Obs. mode</label><select id="obs_mode"></select></div>
+          <div class="field"><label for="threshold_sign">Threshold sign</label><select id="threshold_sign"></select></div>
+        </div>
+
+        <p class="side-title">Observability components</p>
+        <div class="selectors-grid">
+          <div class="field"><label for="E_key">E (energy)</label><select id="E_key"></select></div>
+          <div class="field"><label for="B_key">B (broadcast)</label><select id="B_key"></select></div>
+          <div class="field"><label for="X_key">X (expansion)</label><select id="X_key"></select></div>
+          <div class="field"><label for="C_key">C (compression)</label><select id="C_key"></select></div>
+          <div class="field"><label for="S_key">S (stealth)</label><select id="S_key"></select></div>
+        </div>
+
+        <div class="toggle-row">
+          <label for="time_varying">Time-varying drivers</label>
+          <span class="switch"><input type="checkbox" id="time_varying" /><span class="slider-toggle"></span></span>
+        </div>
+
+        <p class="side-title">Initial conditions (I₀, R₀, O₀)</p>
+        <div class="ic-grid" id="ic-grid"></div>
+
+        <hr class="div" />
+        <p class="side-title">Parameters</p>
+        <div id="param-groups"></div>
+
+        <hr class="div" />
+        <div class="btn-row">
+          <button class="btn" id="reset-btn">↺ Reset preset</button>
+          <button class="btn accent" id="defaults-btn">Defaults</button>
+        </div>
+      </aside>
+
+      <!-- ================= MAIN ================= -->
+      <div class="main-col">
+        <!-- verdict card -->
+        <div class="verdict glass" id="verdict-card">
+          <div>
+            <span class="badge blue" id="claim-badge">🔵 Plausible</span>
+            <div class="regime-name" id="regime-name" style="margin-top:10px">—</div>
+          </div>
+          <p class="desc" id="regime-desc"></p>
+          <div>
+            <p class="reasons-title">Why (thresholds fired)</p>
+            <ul class="reasons" id="regime-reasons"></ul>
+          </div>
+          <div class="stat-strip" id="stat-strip"></div>
+        </div>
+
+        <!-- 3D state space (I,R,O): two renderers side by side for comparison -->
+        <div class="glass panel-pad plot3d-block">
+          <div class="plot3d-head">
+            <div>
+              <h3 class="panel-head">3D State Space — I, R, O</h3>
+              <p class="panel-sub" style="margin:0">The full trajectory in capability–regulation–observability space. Two renderers shown so you can pick one. Drag to orbit, scroll to zoom.</p>
+            </div>
+            <span class="compare-note">comparison</span>
+          </div>
+          <div class="narrative" id="narr-3d"></div>
+          <div class="plot3d-grid">
+            <div class="plot3d-cell">
+              <div class="plot3d-label">Plotly 3D</div>
+              <div class="plot3d-view" id="plot3d-plotly"></div>
+              <div class="plot3d-axes">x = I · y = R · z = O</div>
+            </div>
+            <div class="plot3d-cell">
+              <div class="plot3d-label">three.js · WebGL</div>
+              <div class="plot3d-view" id="plot3d-three"></div>
+              <div class="plot3d-axes">amber path · <span style="color:var(--green)">start</span> → <span style="color:var(--coral)">end</span> · x = I, y = R, z = O</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- tabs -->
+        <nav class="tabs glass" role="tablist">
+          <button class="tab-btn active" data-tab="traj">Trajectories</button>
+          <button class="tab-btn" data-tab="phase">Phase Diagram</button>
+          <button class="tab-btn" data-tab="lambert">Lambert Boundary</button>
+          <button class="tab-btn" data-tab="ofunc">Observability Functions</button>
+          <button class="tab-btn" data-tab="regime">Regime Analysis</button>
+          <button class="tab-btn" data-tab="drake">Drake Decomposition</button>
+        </nav>
+
+        <!-- Trajectories -->
+        <section class="tab-panel active" data-panel="traj">
+          <div class="narrative" id="narr-traj" style="margin-bottom:18px"></div>
+          <div class="plot-stack">
+            <div class="glass panel-pad">
+              <h3 class="panel-head">Capability &amp; Regulation</h3>
+              <p class="panel-sub">I(τ) — capability (cyan) vs R(τ) — regulation (coral). Annotations mark the first τ where I crosses R and where R falls below R_min.</p>
+              <div class="plot" id="plot-ir"></div>
+            </div>
+            <div class="glass panel-pad">
+              <h3 class="panel-head">Observability</h3>
+              <p class="panel-sub">O(τ) — the modelled observability signal. A post-peak decline beyond 30% is annotated.</p>
+              <div class="plot" id="plot-o"></div>
+            </div>
+            <div class="glass panel-pad">
+              <h3 class="panel-head">Detected Population</h3>
+              <p class="panel-sub">N_obs (green) and detection probability P_det (purple). Dashed line marks N_true.</p>
+              <div class="plot" id="plot-n"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Phase -->
+        <section class="tab-panel" data-panel="phase">
+          <div class="glass panel-pad">
+            <h3 class="panel-head">Phase Diagram — (I, O) plane</h3>
+            <p class="panel-sub">Trajectory through capability–observability space with regime regions shaded (split at I_advanced and O_detectable). Overlay other stage presets to compare paths.</p>
+            <div class="overlay-chips" id="overlay-chips"></div>
+            <div class="narrative" id="narr-phase" style="margin-bottom:14px"></div>
+            <div class="plot plot-tall" id="plot-phase"></div>
+          </div>
+        </section>
+
+        <!-- Lambert -->
+        <section class="tab-panel" data-panel="lambert">
+          <div class="glass panel-pad" id="lambert-wrap">
+            <h3 class="panel-head">Lambert-W Critical Boundary</h3>
+            <p class="panel-sub">Contour of the critical capability I_crit over the (A_rec, R) plane. The white star marks the current operating point (A_rec, R_final).</p>
+            <div class="narrative" id="narr-lambert" style="margin-bottom:14px"></div>
+            <div id="lambert-content"></div>
+          </div>
+        </section>
+
+        <!-- O(I) functions -->
+        <section class="tab-panel" data-panel="ofunc">
+          <div class="glass panel-pad">
+            <h3 class="panel-head">Static Observability Models O(I)</h3>
+            <p class="panel-sub">The four static O(I) forms over I ∈ [0, 20] with the current λ, k, Ic. The active model (O_key) is highlighted.</p>
+            <div class="narrative" id="narr-ofunc" style="margin-bottom:14px"></div>
+            <div class="plot plot-tall" id="plot-ofunc"></div>
+          </div>
+        </section>
+
+        <!-- Regime analysis -->
+        <section class="tab-panel" data-panel="regime">
+          <div class="glass panel-pad">
+            <h3 class="panel-head">Regime Analysis</h3>
+            <p class="panel-sub">The classifier evaluates seven ordered criteria on the solved trajectory. The full decision trace and thresholds are shown below.</p>
+            <div class="narrative" id="narr-regime" style="margin-bottom:16px"></div>
+            <div id="regime-detail"></div>
+          </div>
+        </section>
+
+        <!-- Drake -->
+        <section class="tab-panel" data-panel="drake">
+          <div class="glass panel-pad">
+            <h3 class="panel-head">Drake Equation Decomposition</h3>
+            <p class="panel-sub">Classical Drake estimate vs the ROF-modified observed count, where the signal probability P_sig = h(O_final) is set by the model's final observability.</p>
+            <div class="narrative" id="narr-drake" style="margin-bottom:16px"></div>
+            <div class="drake-cols">
+              <div class="drake-card glass">
+                <h4>Classical Drake — N</h4>
+                <div class="n-out" id="drake-classical-out" style="color:var(--gold)">—</div>
+                <div class="chain" id="drake-classical-chain"></div>
+                <div class="drake-sliders" id="drake-sliders"></div>
+              </div>
+              <div class="drake-card glass">
+                <h4>ROF-modified — N_obs</h4>
+                <div class="n-out" id="drake-rof-out" style="color:var(--green)">—</div>
+                <div class="chain" id="drake-rof-chain"></div>
+                <p class="eq-note" style="margin-top:16px">The ROF multiplies the true count by survival, the model's signal probability h(O), and search coverage — collapsing an in-principle population to an actually-observed one.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Findings: one synthesised paragraph across every view, always visible -->
+        <div class="glass panel-pad findings-panel">
+          <div class="findings-head">
+            <h3 class="panel-head">Findings</h3>
+            <button class="btn-copy" id="copy-findings" type="button">Copy</button>
+          </div>
+          <p class="panel-sub" style="margin:0 0 12px">A plain-language summary of this exact parameter set, drawn from every view.</p>
+          <div class="narrative narr-summary" id="narr-summary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <div>Built from
+      <a href="https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer" target="_blank" rel="noopener">RehmozAyub/Ulm_QH_recursive_observability_explorer</a>
+      — Ulm University Quantum Hackathon, June 2026
+    </div>
+    <div class="fdisc">A modeling framework, not a solution to the Fermi Paradox.</div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/plots.js"></script>
+  <script src="js/plot3d.js"></script>
+  <script src="js/narratives.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

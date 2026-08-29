@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recursive Observability Explorer — How to Use</title>
+  <meta name="description" content="How to use the Recursive Observability Explorer: what the model is, what it tracks, and how to drive the simulator, in plain language." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070810'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%23e0a24c' stroke-width='2'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' fill='none' stroke='%23e0a24c' stroke-width='1.4' transform='rotate(28 16 16)'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <nav class="topbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="8.5" stroke="currentColor" stroke-width="3"/>
+        <ellipse cx="32" cy="32" rx="27" ry="11" stroke="currentColor" stroke-width="2.4" transform="rotate(28 32 32)"/>
+      </svg>
+      <span>ROF Explorer</span>
+    </a>
+    <div class="topbar-links">
+      <a href="index.html">Overview</a>
+      <a class="primary" href="explorer.html">Launch</a>
+    </div>
+  </nav>
+
+  <div class="guide-wrap">
+    <header class="rise">
+      <p class="section-label">How to use</p>
+      <h1>Reading the Recursive Observability Explorer</h1>
+      <p class="g-lead">This simulator asks a sharper version of the old question <em>"where is everybody?"</em>. Instead of guessing how many civilisations exist, it asks how visible a civilisation stays as it grows, and whether we would ever catch it. Here is what the model is, what it tracks, and how to drive it.</p>
+    </header>
+
+    <!-- contents -->
+    <nav class="guide-toc rise d1" aria-label="Contents">
+      <a href="#idea">The idea</a>
+      <a href="#tracks">What it tracks</a>
+      <a href="#observability">Why visibility matters</a>
+      <a href="#shapes">Four shapes</a>
+      <a href="#controls">Driving it</a>
+      <a href="#views">The six views</a>
+      <a href="#verdict">The verdict</a>
+      <a href="#firstrun">A first run</a>
+      <a href="#caveats">Caveats</a>
+    </nav>
+
+    <!-- 1 -->
+    <section class="guide-section" id="idea">
+      <h2 class="g-h2"><span class="g-tag">01</span>The idea in one minute</h2>
+      <p class="g-p">The Fermi Paradox is the tension between how many technological civilisations we expect and how few we actually see. Most attempts to resolve it argue about the <em>number</em> of civilisations. This model argues about their <em>visibility</em>.</p>
+      <p class="g-p">A civilisation that exists is not automatically detectable, and one that is detectable in principle is not automatically observed by us. Visibility is not a fixed trait either. As a civilisation becomes more capable it might grow louder, or it might grow quieter, using less energy, leaking fewer signals, or turning inward. The Recursive Observability Filter (ROF) is a small set of equations for watching that visibility rise, peak, or fade over time.</p>
+      <p class="g-p">It is a framework for thinking, not an answer. Nothing here claims to know where everyone is.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="guide-section" id="tracks">
+      <h2 class="g-h2"><span class="g-tag">02</span>The three things it tracks</h2>
+      <p class="g-p">The model follows three quantities as a civilisation develops, in a dimensionless time it calls <em>&tau;</em>.</p>
+      <ul class="g-defs">
+        <li><b>I — capability.</b> How much a civilisation can model, build, coordinate and transform its surroundings. Think science, computation and technology together. It is not IQ, wisdom or moral worth.</li>
+        <li><b>R — regulation.</b> How well it keeps itself coherent and in control: governance, alignment, safety culture, error correction, long-term planning.</li>
+        <li><b>O — observability.</b> How visible it is from the outside: waste heat, radio leakage, beacons, megastructures, probes, anomalies.</li>
+      </ul>
+      <p class="g-p">The central danger the model is built around is simple to state: capability can start improving <em>itself</em> faster than regulation can keep up. When that recursive amplification outruns regulation, the system can run away or collapse. Whether it survives depends on whether the tools that make a civilisation more powerful are also turned toward keeping it stable.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="guide-section" id="observability">
+      <h2 class="g-h2"><span class="g-tag">03</span>Why visibility is the whole point</h2>
+      <p class="g-p">The model keeps three counts apart, because collapsing them is the classic mistake:</p>
+      <div class="g-hier">
+        <span>N<sub>true</sub></span><span class="g-ge">&ge;</span><span>N<sub>detectable</sub></span><span class="g-ge">&ge;</span><span>N<sub>observed</sub></span>
+      </div>
+      <p class="g-p">Most civilisations that exist are never detectable, and most that are detectable are never actually observed by our searches. A signal only counts if it overlaps with where and how we happen to be looking. The final detected number folds in survival, signal strength, and search coverage, so a civilisation being visible in principle never means it was seen.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="guide-section" id="shapes">
+      <h2 class="g-h2"><span class="g-tag">04</span>Four shapes visibility can take</h2>
+      <p class="g-p">Rather than assume visibility only falls, the model lets you test four honest options for how observability depends on capability. You choose one with the <code>O(I)</code> control.</p>
+      <ul class="g-defs">
+        <li><b>Increasing.</b> The more capable, the more visible. Louder with growth.</li>
+        <li><b>Decreasing.</b> Growth brings efficiency and concealment, so visibility falls.</li>
+        <li><b>Peaked.</b> A civilisation gets loud during expansion, then quiets down once it optimises. This is the case the model cares about most.</li>
+        <li><b>Threshold.</b> Visibility switches on or off around a critical capability.</li>
+      </ul>
+    </section>
+
+    <!-- 5 -->
+    <section class="guide-section" id="controls">
+      <h2 class="g-h2"><span class="g-tag">05</span>Driving the simulator</h2>
+      <p class="g-p">All of the controls live in the left sidebar. Change anything and the model re-solves immediately; there is no run button.</p>
+      <ul class="g-defs">
+        <li><b>Stage preset.</b> The fastest way to start. Each preset loads a whole scenario, from pre-technological through collapse, expansion, and quiet-but-advanced. Pick one and watch what it does.</li>
+        <li><b>Model functions.</b> The shape of recursion <code>F(I)</code>, the visibility shape <code>O(I)</code>, whether observability is solved dynamically or read off afterward, and the direction of the threshold.</li>
+        <li><b>Observability components.</b> The ingredients that add to or subtract from visibility: energy use, broadcasting, expansion, compression, and stealth.</li>
+        <li><b>Time-varying drivers.</b> Let the driving pressures change over time instead of staying fixed.</li>
+        <li><b>Initial conditions.</b> Where the civilisation starts in capability, regulation and observability.</li>
+        <li><b>Parameters.</b> The individual coefficients, grouped by which equation they belong to. Every slider re-solves the model live.</li>
+        <li><b>Reset and Defaults.</b> Reset returns to the current preset; Defaults returns to the model's baseline.</li>
+      </ul>
+      <p class="g-note">A good habit: start from a preset, then nudge one slider at a time so you can see what each coefficient actually does.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="guide-section" id="views">
+      <h2 class="g-h2"><span class="g-tag">06</span>The six views</h2>
+      <p class="g-p">The tabs on the right are six angles on the same live solution.</p>
+      <ol class="g-views">
+        <li><b>Trajectories.</b> Capability, regulation, observability and the detected population over time. The clearest place to see a civilisation grow loud and then go quiet.</li>
+        <li><b>Phase Diagram.</b> The path through capability and observability space, with the regime regions shaded behind it. You can overlay other presets to compare paths.</li>
+        <li><b>Lambert Boundary.</b> A critical-capability contour, valid when recursion takes the Lambert form, with a star marking where your current settings sit.</li>
+        <li><b>Observability Functions.</b> The four shapes from section four, drawn together, with the active one highlighted.</li>
+        <li><b>Regime Analysis.</b> The full ordered checklist the classifier runs, and which rule fired.</li>
+        <li><b>Drake Decomposition.</b> The classical Drake count beside the smaller, observability-corrected number this model predicts.</li>
+      </ol>
+    </section>
+
+    <!-- 7 -->
+    <section class="guide-section" id="verdict">
+      <h2 class="g-h2"><span class="g-tag">07</span>The verdict and the seven regimes</h2>
+      <p class="g-p">At the top of the simulator sits a verdict card. It names the regime the trajectory fell into, gives a confidence label, and lists the thresholds that fired to get there.</p>
+      <ul class="g-defs">
+        <li><b>Pre-detectable.</b> Capability and visibility both stayed low. Nothing to see yet.</li>
+        <li><b>Visible-technological.</b> A real chance of detection built up, the kind classic Fermi arguments assume is common.</li>
+        <li><b>Expansionist-visible.</b> High capability and high visibility. Loud and far-reaching.</li>
+        <li><b>Optimized-low-observable.</b> High capability but low visibility. Advanced, and quiet. This is the case that makes the silence easy to explain.</li>
+        <li><b>Runaway.</b> Capability shot past its safe threshold, or amplification overwhelmed regulation.</li>
+        <li><b>Collapse-proxy.</b> A runaway that then lost regulation or faded after a brief, bright spike.</li>
+        <li><b>Uncertain.</b> No rule was met cleanly. The model refuses to overclaim.</li>
+      </ul>
+      <p class="g-p">Because the subject is speculative, every reading carries a confidence label, from <b>established</b> (backed by observation) through <b>plausible</b> and <b>hypothetical</b> down to <b>speculative</b>. The colour of the badge tells you how much weight to put on the verdict.</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="guide-section" id="firstrun">
+      <h2 class="g-h2"><span class="g-tag">08</span>A good first run</h2>
+      <ol class="g-steps">
+        <li>Open the simulator and leave it on the default scenario. Watch the Trajectories tab: capability climbs, and observability rises then falls.</li>
+        <li>Switch the stage preset to the collapse scenario. See the verdict flip and the trajectory turn sharp.</li>
+        <li>Try the quiet-but-advanced preset, then open the Phase Diagram. Notice how the path ends deep in high capability but low visibility.</li>
+        <li>Set the recursion to the Lambert form and open the Lambert Boundary to see where your operating point sits against the critical line.</li>
+        <li>Finish on the Drake Decomposition and compare the classical count with the corrected one.</li>
+      </ol>
+    </section>
+
+    <!-- 9 -->
+    <section class="guide-section" id="caveats">
+      <h2 class="g-h2"><span class="g-tag">09</span>Caveats worth keeping</h2>
+      <div class="g-callout">
+        <p class="g-p">Low observability does not mean physical invisibility. Any energy use leaves consequences, and true invisibility is physically extreme and never assumed here.</p>
+        <p class="g-p">The thresholds, coefficients and regime rules are deliberate modelling choices, not measured facts. The point of the tool is to make those choices explicit and let you push on them.</p>
+        <p class="g-p" style="margin-bottom:0"><b>This is a modeling framework, not a solution to the Fermi Paradox.</b></p>
+      </div>
+      <div class="cta-row" style="margin-top:30px">
+        <a class="btn-cta primary" href="explorer.html">Launch the Explorer <span class="arrow">&rarr;</span></a>
+        <a class="btn-cta ghost" href="index.html">Back to overview</a>
+      </div>
+    </section>
+  </div>
+
+  <footer class="site-foot">
+    <div>Built from
+      <a href="https://github.com/RehmozAyub/Ulm_QH_recursive_observability_explorer" target="_blank" rel="noopener">RehmozAyub/Ulm_QH_recursive_observability_explorer</a>
+      — Ulm University Quantum Hackathon, June 2026
+    </div>
+    <div class="fdisc">A modeling framework, not a solution to the Fermi Paradox.</div>
+  </footer>
+
+  <script src="js/background.js"></script>
+  <script src="js/motion.js"></script>
+</body>
+</html>
