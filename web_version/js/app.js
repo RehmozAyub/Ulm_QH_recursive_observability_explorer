@@ -12,6 +12,25 @@
   const overlayState = {}; // stage_key -> bool
   const drakeFactors = { R_star: 1, f_p: 1, n_e: 1, f_l: 1, f_i: 1, f_c: 1, L: 1 };
 
+  // ---- Recursive Take-off (RSI) tab ----
+  // A curated recursive-transition civilisation whose take-off is dramatic
+  // enough to read at a glance. Verified against the Python model: the "holds"
+  // branch lands expansionist-visible (survives), the "fails" branch lands
+  // collapse-proxy. The two branches differ ONLY in w (how fast recursion
+  // erodes regulation), so the fork is attributable to regulation alone.
+  const RSI_DEMO_PARAMS = {
+    a: 0.60, b: 0.10, c: 0.40, sI: 0.16,
+    u: 0.30, v: 0.25, w: 0.25, sR: 0.40,
+    p: 0.50, q: 0.30, r: 0.40, m: 0.50, n: 0.30,
+    A: 1.0, A_rec: 1.2, A_ref: 1.0, Q: 1.0,
+    F_key: "superlinear", O_key: "peaked", obs_mode: "dynamic",
+    E_key: "linear", B_key: "linear", X_key: "linear", C_key: "linear", S_key: "linear",
+    tau_max: 30.0,
+  };
+  const RSI_DEMO_Y0 = [0.8, 0.85, 0.10];
+  const RSI_W_HOLD = 0.25;   // regulation keeps pace with recursion
+  const RSI_W_FAIL = 1.80;   // recursion erodes regulation faster than it rebuilds
+
   const $ = (id) => document.getElementById(id);
   const fmtNum = (v) => {
     if (v === 0) return "0";
@@ -245,6 +264,7 @@
   function renderActiveTab() {
     const t = activeTab();
     if (t === "traj") renderTraj();
+    else if (t === "rsi") renderRSI();
     else if (t === "phase") renderPhase();
     else if (t === "lambert") renderLambert();
     else if (t === "ofunc") renderOFunc();
@@ -263,6 +283,69 @@
     if (!lastResult) return;
     P.plotPhase($("plot-phase"), lastResult, params, computeOverlays());
     renderNarrative("phase", "narr-phase");
+  }
+
+  // ---- Recursive Take-off (RSI) ----
+  // First τ where the recursive growth term b·A_rec·F(I) overtakes ordinary
+  // growth a·A·I — i.e. where capability starts improving itself faster than
+  // it grows normally. Base drivers (no time-varying) match the marker's intent.
+  function rsiOnsetTau(p, res) {
+    const F = ROF.F_REGISTRY[p.F_key];
+    for (let i = 0; i < res.I.length; i++) {
+      const rec = p.b * p.A_rec * F(res.I[i], p);
+      const ord = p.a * p.A * res.I[i];
+      if (rec > ord) return res.tau[i];
+    }
+    return null;
+  }
+  // Two branches from the CURRENT settings, forking only on regulation erosion w.
+  function computeRSIBranches() {
+    const pHold = Object.assign({}, params, { w: RSI_W_HOLD });
+    const pFail = Object.assign({}, params, { w: RSI_W_FAIL });
+    const resHold = ROF.integrate(pHold, y0);
+    const resFail = ROF.integrate(pFail, y0);
+    return {
+      hold: { res: resHold, params: pHold, regime: ROF.classifyRegime(resHold, pHold).label },
+      fail: { res: resFail, params: pFail, regime: ROF.classifyRegime(resFail, pFail).label },
+      onsetTau: rsiOnsetTau(pFail, resFail),
+    };
+  }
+  function renderRSI() {
+    const b = computeRSIBranches();
+    P.plotRSI($("plot-rsi-cap"), $("plot-rsi-reg"), b, params);
+    renderRSINarrative(b);
+  }
+  function renderRSINarrative(b) {
+    const el = $("narr-rsi");
+    if (!el) return;
+    const onset = b.onsetTau;
+    const onsetTxt = onset == null
+      ? "Recursion never overtakes ordinary growth for these settings — load the demo, or raise the recursive terms (b, A_rec) or use a super-linear F(I), to see the take-off."
+      : `Recursive self-improvement overtakes ordinary growth at τ ≈ ${onset.toFixed(1)}.`;
+    const surv = /expansionist|optimized|visible/.test(b.hold.regime);
+    const coll = /collapse|runaway/.test(b.fail.regime);
+    const holdTxt = surv
+      ? "with regulation intact, capability climbs to an advanced but controlled level and the civilisation survives"
+      : `with strong regulation the civilisation ends in the ${b.hold.regime.replace(/-/g, " ")} regime`;
+    const failTxt = coll
+      ? "when recursion erodes control past its floor, capability runs away and self-control collapses"
+      : `with weak regulation the civilisation ends in the ${b.fail.regime.replace(/-/g, " ")} regime`;
+    el.className = "narrative " + (coll ? "warn" : "neutral");
+    el.innerHTML = `<span class="narr-dot"></span><div class="narr-body">`
+      + `<p class="narr-title">Same take-off, two fates</p>`
+      + `<p class="narr-text">${escapeHtml(onsetTxt)} From that point on the branches diverge on one thing only — regulation: ${escapeHtml(holdTxt)}; ${escapeHtml(failTxt)}.</p>`
+      + `</div>`;
+  }
+  function loadRSIDemo() {
+    params = CFG.makeParams(RSI_DEMO_PARAMS);
+    y0 = RSI_DEMO_Y0.slice();
+    currentStage = "";
+    $("stage-select").value = "";
+    syncSliders();
+    // make sure the tab is showing
+    const btn = document.querySelector('.tab-btn[data-tab="rsi"]');
+    if (btn && !btn.classList.contains("active")) btn.click();
+    recompute();
   }
   function renderOFunc() { P.plotOFunc($("plot-ofunc"), params); renderNarrative("ofunc", "narr-ofunc"); }
 
@@ -418,6 +501,8 @@
     $("time_varying").addEventListener("change", (e) => { params.time_varying = e.target.checked; markCustom(); schedule(); });
     $("reset-btn").addEventListener("click", () => { if (currentStage) loadStage(currentStage); else loadDefaults(); });
     $("defaults-btn").addEventListener("click", loadDefaults);
+    const rsiBtn = $("rsi-demo-btn");
+    if (rsiBtn) rsiBtn.addEventListener("click", loadRSIDemo);
 
     const cp = $("copy-findings");
     if (cp) cp.addEventListener("click", () => {

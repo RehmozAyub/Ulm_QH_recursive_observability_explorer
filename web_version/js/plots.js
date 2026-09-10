@@ -204,5 +204,57 @@
     Plotly.react(div, traces, layout, CONFIG);
   }
 
-  global.ROF_PLOTS = { plotIR, plotO, plotN, plotPhase, plotLambert, plotOFunc, COLORS: C };
+  // Plot 7: Recursive Take-off — the RSI "aha". Two branches that share a
+  // civilisation and fork only on whether regulation survives the recursion.
+  // Rendered as two stacked panels: capability (the take-off) and regulation
+  // (what decides survive-vs-collapse), with the RSI-onset marker on both.
+  function plotRSI(divCap, divReg, branches, params) {
+    const hold = branches.hold.res, fail = branches.fail.res;
+    const onset = branches.onsetTau;
+    const SURV = C.green, COLL = C.coral;
+
+    function onsetShape() {
+      if (onset == null) return [];
+      return [{ type: "line", x0: onset, x1: onset, yref: "paper", y0: 0, y1: 1, line: { color: C.gold, width: 1.4, dash: "dot" } }];
+    }
+    function onsetAnn(yref) {
+      if (onset == null) return [];
+      return [{ x: onset, yref: "paper", y: 1, yanchor: "bottom", xanchor: "left", text: " RSI onset", showarrow: false, font: { size: 10, color: C.gold } }];
+    }
+
+    // -- Capability panel --
+    const capTraces = [
+      { x: hold.tau, y: hold.I, name: "regulation holds → survives", mode: "lines", line: { color: SURV, width: 2.7 } },
+      { x: fail.tau, y: fail.I, name: "regulation fails → collapse", mode: "lines", line: { color: COLL, width: 2.7 } },
+    ];
+    const capShapes = onsetShape().concat([
+      { type: "line", xref: "paper", x0: 0, x1: 1, y0: params.I_advanced, y1: params.I_advanced, line: { color: "rgba(200,210,255,.32)", width: 1, dash: "dash" } },
+    ]);
+    const capAnn = onsetAnn().concat([
+      { xref: "paper", x: 0.01, y: params.I_advanced, yanchor: "bottom", xanchor: "left", text: "advanced capability", showarrow: false, font: { size: 9, color: "rgba(200,210,255,.6)" } },
+    ]);
+    Plotly.react(divCap, capTraces, baseLayout({
+      yaxis: { title: { text: "I — capability" }, gridcolor: GRID, zerolinecolor: ZERO },
+      shapes: capShapes, annotations: capAnn,
+    }), CONFIG);
+
+    // -- Regulation panel -- (clamped so the collapse reads without the
+    // unbounded negative tail flattening the survivors' curve)
+    const regTraces = [
+      { x: hold.tau, y: hold.R, name: "regulation holds", mode: "lines", line: { color: SURV, width: 2.5 } },
+      { x: fail.tau, y: fail.R, name: "regulation fails", mode: "lines", line: { color: COLL, width: 2.5 } },
+    ];
+    const regShapes = onsetShape().concat([
+      { type: "line", xref: "paper", x0: 0, x1: 1, y0: params.R_min, y1: params.R_min, line: { color: COLL, width: 1, dash: "dot" } },
+    ]);
+    const regAnn = onsetAnn().concat([
+      { xref: "paper", x: 0.99, y: params.R_min, yanchor: "bottom", xanchor: "right", text: "control fails below here", showarrow: false, font: { size: 9, color: COLL } },
+    ]);
+    Plotly.react(divReg, regTraces, baseLayout({
+      yaxis: { title: { text: "R — regulation (self-control)" }, gridcolor: GRID, zerolinecolor: ZERO, range: [-0.4, 1.15] },
+      shapes: regShapes, annotations: regAnn,
+    }), CONFIG);
+  }
+
+  global.ROF_PLOTS = { plotIR, plotO, plotN, plotPhase, plotLambert, plotOFunc, plotRSI, COLORS: C };
 })(typeof window !== "undefined" ? window : globalThis);

@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- KaTeX (same version the simulator uses) for the plain-language equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070810'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%23e0a24c' stroke-width='2'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' fill='none' stroke='%23e0a24c' stroke-width='1.4' transform='rotate(28 16 16)'/%3E%3C/svg%3E" />
 </head>
@@ -39,6 +42,7 @@
     <nav class="guide-toc rise d1" aria-label="Contents">
       <a href="#idea">The idea</a>
       <a href="#tracks">What it tracks</a>
+      <a href="#equations">The equations</a>
       <a href="#observability">Why visibility matters</a>
       <a href="#shapes">Four shapes</a>
       <a href="#controls">Driving it</a>
@@ -69,8 +73,45 @@
     </section>
 
     <!-- 3 -->
+    <section class="guide-section" id="equations">
+      <h2 class="g-h2"><span class="g-tag">03</span>The three equations, in plain words</h2>
+      <p class="g-p">The three quantities do not move on their own — they push and pull on each other through three coupled equations, in the dimensionless time <em>&tau;</em>. You do not need the algebra to use the simulator, but reading each line left to right tells you what drives a quantity up and what holds it down. Every slider in the Explorer changes one term in one of these lines.</p>
+      <div class="glass eq-block">
+        <div class="eq-row">
+          <span class="eq-tag">Capability</span>
+          <div class="katex-line" data-eq="\frac{dI}{d\tau} = \underbrace{\text{growth}}_{\text{ordinary}\,+\,\text{recursive self-improvement}} \;-\; \underbrace{c\,R\,I}_{\text{regulation restrains it}} \;-\; \underbrace{\text{saturation}}_{\text{natural limits}}"></div>
+        </div>
+        <div class="eq-row">
+          <span class="eq-tag">Regulation</span>
+          <div class="katex-line" data-eq="\frac{dR}{d\tau} = \underbrace{\text{build-up}}_{\text{learning, institutions}}\,(1-R) \;-\; \underbrace{\text{decay}}_{\text{erosion by recursion}}\,R"></div>
+        </div>
+        <div class="eq-row">
+          <span class="eq-tag">Observability</span>
+          <div class="katex-line" data-eq="\frac{dO}{d\tau} = \underbrace{\text{emission}}_{\text{energy, broadcasts, expansion}} \;-\; (O - O_{\min})\,\underbrace{\text{reduction}}_{\text{efficiency, concealment}}"></div>
+        </div>
+      </div>
+      <ul class="g-defs">
+        <li><b>Capability I</b> — what it can build. Faster computation acts on capability itself, raising the rate at which it compounds: this is the recursive self-improvement term.</li>
+        <li><b>Regulation R</b> — how well it controls itself. It builds on the room still left to improve and erodes in proportion to how hard recursion pushes.</li>
+        <li><b>Observability O</b> — what escapes into space. Emission lifts it; efficiency and concealment pull it back toward a floor it can never fall below.</li>
+      </ul>
+      <p class="g-p" style="margin-top:22px">Being visible in principle is not the same as being seen. The detection chain folds three more things onto observability, which is why the model keeps "who exists" and "who we detect" apart:</p>
+      <div class="glass eq-block">
+        <div class="eq-row">
+          <span class="eq-tag">Who exists</span>
+          <div class="katex-line" data-eq="N = R_{*}\,f_p\,n_e\,f_\ell\,f_i\,f_c\,L \qquad \text{— the classical Drake count}"></div>
+        </div>
+        <div class="eq-row">
+          <span class="eq-tag">Who we detect</span>
+          <div class="katex-line" data-eq="N_{obs} = \underbrace{N_{true}}_{\text{they exist}} \times \underbrace{P_{surv}}_{\text{still active}} \times \underbrace{h(O)}_{\text{emit enough}} \times \underbrace{P_{search}}_{\text{we looked}}"></div>
+        </div>
+      </div>
+      <p class="g-note">These are exactly the equations the simulator integrates every time you touch a control — the plots on the next tabs are their solution.</p>
+    </section>
+
+    <!-- 4 -->
     <section class="guide-section" id="observability">
-      <h2 class="g-h2"><span class="g-tag">03</span>Why visibility is the whole point</h2>
+      <h2 class="g-h2"><span class="g-tag">04</span>Why visibility is the whole point</h2>
       <p class="g-p">The model keeps three counts apart, because collapsing them is the classic mistake:</p>
       <div class="g-hier">
         <span>N<sub>true</sub></span><span class="g-ge">&ge;</span><span>N<sub>detectable</sub></span><span class="g-ge">&ge;</span><span>N<sub>observed</sub></span>
@@ -78,9 +119,9 @@
       <p class="g-p">Most civilisations that exist are never detectable, and most that are detectable are never actually observed by our searches. A signal only counts if it overlaps with where and how we happen to be looking. The final detected number folds in survival, signal strength, and search coverage, so a civilisation being visible in principle never means it was seen.</p>
     </section>
 
-    <!-- 4 -->
+    <!-- 5 -->
     <section class="guide-section" id="shapes">
-      <h2 class="g-h2"><span class="g-tag">04</span>Four shapes visibility can take</h2>
+      <h2 class="g-h2"><span class="g-tag">05</span>Four shapes visibility can take</h2>
       <p class="g-p">Rather than assume visibility only falls, the model lets you test four honest options for how observability depends on capability. You choose one with the <code>O(I)</code> control.</p>
       <ul class="g-defs">
         <li><b>Increasing.</b> The more capable, the more visible. Louder with growth.</li>
@@ -90,9 +131,9 @@
       </ul>
     </section>
 
-    <!-- 5 -->
+    <!-- 6 -->
     <section class="guide-section" id="controls">
-      <h2 class="g-h2"><span class="g-tag">05</span>Driving the simulator</h2>
+      <h2 class="g-h2"><span class="g-tag">06</span>Driving the simulator</h2>
       <p class="g-p">All of the controls live in the left sidebar. Change anything and the model re-solves immediately; there is no run button.</p>
       <ul class="g-defs">
         <li><b>Stage preset.</b> The fastest way to start. Each preset loads a whole scenario, from pre-technological through collapse, expansion, and quiet-but-advanced. Pick one and watch what it does.</li>
@@ -106,12 +147,13 @@
       <p class="g-note">A good habit: start from a preset, then nudge one slider at a time so you can see what each coefficient actually does.</p>
     </section>
 
-    <!-- 6 -->
+    <!-- 7 -->
     <section class="guide-section" id="views">
-      <h2 class="g-h2"><span class="g-tag">06</span>The six views</h2>
-      <p class="g-p">The tabs on the right are six angles on the same live solution.</p>
+      <h2 class="g-h2"><span class="g-tag">07</span>The seven views</h2>
+      <p class="g-p">The tabs on the right are seven angles on the same live solution.</p>
       <ol class="g-views">
         <li><b>Trajectories.</b> Capability, regulation, observability and the detected population over time. The clearest place to see a civilisation grow loud and then go quiet.</li>
+        <li><b>Recursive Take-off.</b> The point the model is really about: where recursive self-improvement lifts capability, and how regulation alone then decides whether that take-off is survived or lost. Press <em>Load RSI demo</em> for the clearest illustration.</li>
         <li><b>Phase Diagram.</b> The path through capability and observability space, with the regime regions shaded behind it. You can overlay other presets to compare paths.</li>
         <li><b>Lambert Boundary.</b> A critical-capability contour, valid when recursion takes the Lambert form, with a star marking where your current settings sit.</li>
         <li><b>Observability Functions.</b> The four shapes from section four, drawn together, with the active one highlighted.</li>
@@ -120,9 +162,9 @@
       </ol>
     </section>
 
-    <!-- 7 -->
+    <!-- 8 -->
     <section class="guide-section" id="verdict">
-      <h2 class="g-h2"><span class="g-tag">07</span>The verdict and the seven regimes</h2>
+      <h2 class="g-h2"><span class="g-tag">08</span>The verdict and the seven regimes</h2>
       <p class="g-p">At the top of the simulator sits a verdict card. It names the regime the trajectory fell into, gives a confidence label, and lists the thresholds that fired to get there.</p>
       <ul class="g-defs">
         <li><b>Pre-detectable.</b> Capability and visibility both stayed low. Nothing to see yet.</li>
@@ -136,9 +178,9 @@
       <p class="g-p">Because the subject is speculative, every reading carries a confidence label, from <b>established</b> (backed by observation) through <b>plausible</b> and <b>hypothetical</b> down to <b>speculative</b>. The colour of the badge tells you how much weight to put on the verdict.</p>
     </section>
 
-    <!-- 8 -->
+    <!-- 9 -->
     <section class="guide-section" id="firstrun">
-      <h2 class="g-h2"><span class="g-tag">08</span>A good first run</h2>
+      <h2 class="g-h2"><span class="g-tag">09</span>A good first run</h2>
       <ol class="g-steps">
         <li>Open the simulator and leave it on the default scenario. Watch the Trajectories tab: capability climbs, and observability rises then falls.</li>
         <li>Switch the stage preset to the collapse scenario. See the verdict flip and the trajectory turn sharp.</li>
@@ -148,9 +190,9 @@
       </ol>
     </section>
 
-    <!-- 9 -->
+    <!-- 10 -->
     <section class="guide-section" id="caveats">
-      <h2 class="g-h2"><span class="g-tag">09</span>Caveats worth keeping</h2>
+      <h2 class="g-h2"><span class="g-tag">10</span>Caveats worth keeping</h2>
       <div class="g-callout">
         <p class="g-p">Low observability does not mean physical invisibility. Any energy use leaves consequences, and true invisibility is physically extreme and never assumed here.</p>
         <p class="g-p">The thresholds, coefficients and regime rules are deliberate modelling choices, not measured facts. The point of the tool is to make those choices explicit and let you push on them.</p>
@@ -173,5 +215,15 @@
 
   <script src="js/background.js"></script>
   <script src="js/motion.js"></script>
+  <script>
+    // Render the plain-language equations once KaTeX has loaded (deferred).
+    (function renderKatex() {
+      if (!window.katex) { setTimeout(renderKatex, 120); return; }
+      document.querySelectorAll(".katex-line[data-eq]").forEach(function (el) {
+        try { katex.render(el.dataset.eq, el, { displayMode: true, throwOnError: false }); }
+        catch (e) { el.textContent = el.dataset.eq; }
+      });
+    })();
+  </script>
 </body>
 </html>
