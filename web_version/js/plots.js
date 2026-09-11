@@ -224,8 +224,10 @@
     }
     function onsetAnn() {
       if (onset == null) return [];
-      return [{ x: onset, yref: "paper", y: 0.5, yanchor: "middle", xanchor: "right", text: "RSI onset ", showarrow: false, font: { size: 9, color: "rgba(200,210,255,.65)" } }];
+      // sits in the top margin, above the plot, centred on the onset line
+      return [{ x: onset, yref: "paper", y: 1.0, yanchor: "bottom", xanchor: "center", yshift: 3, text: "RSI onset", showarrow: false, font: { size: 9, color: "rgba(200,210,255,.6)" } }];
     }
+    const rsiMargin = { l: 58, r: 58, t: 30, b: 46 };
     // -- Capability panel --
     const capTraces = [
       { x: cut(hold.tau, hi), y: cut(hold.I, hi), name: "regulation holds", mode: "lines", line: { color: HOLD, width: 2.7 } },
@@ -242,7 +244,7 @@
     ]);
     if (failCollapsed) capAnn.push({ x: fail.tau[fi], y: fail.I[fi], xanchor: "left", yanchor: "middle", xshift: 14, text: "runs away, collapses", showarrow: false, font: { size: 11, color: FAIL } });
     Plotly.react(divCap, capTraces, baseLayout({
-      showlegend: false,
+      showlegend: false, margin: rsiMargin,
       yaxis: { title: { text: "I — capability" }, gridcolor: GRID, zerolinecolor: ZERO, range: [0, yTop] },
       shapes: capShapes, annotations: capAnn,
     }), CONFIG);
@@ -262,7 +264,7 @@
     ]);
     if (failCollapsed) regAnn.push({ x: fail.tau[fi], y: fail.R[fi], xanchor: "left", yanchor: "middle", xshift: 14, text: "control lost", showarrow: false, font: { size: 11, color: FAIL } });
     Plotly.react(divReg, regTraces, baseLayout({
-      showlegend: false,
+      showlegend: false, margin: rsiMargin,
       yaxis: { title: { text: "R — self-control" }, gridcolor: GRID, zerolinecolor: ZERO, range: [0, 1.0] },
       shapes: regShapes, annotations: regAnn,
     }), CONFIG);
