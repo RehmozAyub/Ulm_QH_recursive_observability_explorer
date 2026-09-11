@@ -14,23 +14,26 @@
 
   // ---- Recursive Take-off (RSI) tab ----
   // A curated recursive-transition civilisation with super-linear recursion,
-  // so the take-off reads at a glance. Verified against the Python reference:
-  // the two branches differ ONLY in w (how fast recursion erodes regulation),
-  // so the fork is attributable to regulation alone. With regulation the
-  // capability stays controlled; without it, capability runs away past the
-  // runaway threshold and the trajectory is ended at that collapse point.
+  // so the take-off reads at a glance. Verified against the Python reference.
+  // The two branches differ ONLY in w (how fast recursion erodes regulation),
+  // so the fork is attributable to regulation alone. The regulation-side
+  // coefficients (u, v, sR) are deliberately small so self-control declines
+  // GRADUALLY over the same time range where capability moves — rather than
+  // collapsing in the first step — which makes the two panels read together.
+  // With regulation holding, capability stays contained; without it, capability
+  // runs away past the runaway threshold and the trajectory ends at collapse.
   const RSI_DEMO_PARAMS = {
     a: 0.30, b: 0.16, c: 0.60, sI: 0.14,
-    u: 0.30, v: 0.25, w: 0.15, sR: 0.30,
+    u: 0.06, v: 0.05, w: 0.08, sR: 0.03,
     p: 0.50, q: 0.30, r: 0.40, m: 0.50, n: 0.30,
     A: 1.0, A_rec: 1.2, A_ref: 1.0, Q: 1.0,
     F_key: "superlinear", O_key: "peaked", obs_mode: "dynamic",
     E_key: "linear", B_key: "linear", X_key: "linear", C_key: "linear", S_key: "linear",
-    I_runaway: 50.0, tau_max: 40.0,
+    I_runaway: 50.0, tau_max: 30.0,
   };
   const RSI_DEMO_Y0 = [0.8, 0.85, 0.10];
-  const RSI_W_HOLD = 0.15;   // regulation keeps pace with recursion
-  const RSI_W_FAIL = 1.50;   // recursion erodes regulation faster than it rebuilds
+  const RSI_W_HOLD = 0.08;   // regulation keeps pace; erodes slowly
+  const RSI_W_FAIL = 0.42;   // recursion erodes regulation faster than it rebuilds
 
   const $ = (id) => document.getElementById(id);
   const fmtNum = (v) => {
@@ -254,9 +257,34 @@
   function renderSummary() {
     const el = $("narr-summary");
     if (!el || !window.ROF_NARRATIVES || !window.ROF_NARRATIVES.buildSummary || !lastResult) return;
-    const s = window.ROF_NARRATIVES.buildSummary(narrCtx());
+    // The Recursive Take-off tab is a two-branch comparison, not a single
+    // trajectory, so it gets its own findings rather than the generic summary.
+    const s = (activeTab() === "rsi") ? buildRSIFindings() : window.ROF_NARRATIVES.buildSummary(narrCtx());
     el.className = "narrative narr-summary " + (s.tone || "neutral");
     el.innerHTML = `<span class="narr-dot"></span><div class="narr-body"><p class="narr-title">${escapeHtml(s.title)}</p><p class="narr-text" id="summary-text">${escapeHtml(s.text)}</p></div>`;
+  }
+  // Findings written for the two-branch recursive-take-off comparison.
+  function buildRSIFindings() {
+    const b = computeRSIBranches();
+    const onset = b.onsetTau;
+    const hold = b.hold.res, fail = b.fail.res;
+    const hi = b.hold.collapseIdx == null ? hold.tau.length - 1 : b.hold.collapseIdx;
+    const holdI = hold.I[hi], holdR = hold.R[hi];
+    const failCollapsed = b.fail.collapseIdx != null;
+    const fi = failCollapsed ? b.fail.collapseIdx : fail.tau.length - 1;
+    const failR = fail.R[fi], failTau = fail.tau[fi];
+    const f = (x) => fmtNum(x);
+    const parts = [];
+    parts.push(onset == null
+      ? "For these settings recursion never overtakes ordinary growth, so there is no take-off to compare. Press Reset to RSI parameters."
+      : `Recursive self-improvement lifts capability in both civilisations, overtaking ordinary growth at τ ≈ ${onset.toFixed(1)}.`);
+    parts.push("The two branches differ in one thing only: how fast recursion erodes their regulation, and that erosion plays out gradually rather than all at once.");
+    parts.push(`When regulation holds, self-control eases down to about R ≈ ${f(holdR)} and capability stays contained at I ≈ ${f(holdI)}.`);
+    parts.push(failCollapsed
+      ? `When regulation fails, self-control falls to about R ≈ ${f(failR)}, and once it is that low the capability runs away past the runaway threshold at τ ≈ ${failTau.toFixed(1)}, where the trajectory ends in collapse.`
+      : `When regulation fails, self-control falls to about R ≈ ${f(failR)} and capability is driven far higher.`);
+    parts.push("Same take-off, opposite fate, decided entirely by regulation.");
+    return { tone: failCollapsed ? "warn" : "neutral", title: "Findings for the recursive take-off", text: parts.join(" ") };
   }
 
   // ================= Renderers =================
@@ -528,6 +556,7 @@
         document.querySelector(`.tab-panel[data-panel="${btn.dataset.tab}"]`).classList.add("active");
         // resize/redraw plots on tab show
         renderActiveTab();
+        renderSummary();   // Findings is tab-aware (RSI tab gets its own)
         setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
       });
     });
