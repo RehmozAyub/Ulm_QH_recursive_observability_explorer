@@ -13,23 +13,24 @@
   const drakeFactors = { R_star: 1, f_p: 1, n_e: 1, f_l: 1, f_i: 1, f_c: 1, L: 1 };
 
   // ---- Recursive Take-off (RSI) tab ----
-  // A curated recursive-transition civilisation whose take-off is dramatic
-  // enough to read at a glance. Verified against the Python model: the "holds"
-  // branch lands expansionist-visible (survives), the "fails" branch lands
-  // collapse-proxy. The two branches differ ONLY in w (how fast recursion
-  // erodes regulation), so the fork is attributable to regulation alone.
+  // A curated recursive-transition civilisation with super-linear recursion,
+  // so the take-off reads at a glance. Verified against the Python reference:
+  // the two branches differ ONLY in w (how fast recursion erodes regulation),
+  // so the fork is attributable to regulation alone. With regulation the
+  // capability stays controlled; without it, capability runs away past the
+  // runaway threshold and the trajectory is ended at that collapse point.
   const RSI_DEMO_PARAMS = {
-    a: 0.60, b: 0.10, c: 0.40, sI: 0.16,
-    u: 0.30, v: 0.25, w: 0.25, sR: 0.40,
+    a: 0.30, b: 0.16, c: 0.60, sI: 0.14,
+    u: 0.30, v: 0.25, w: 0.15, sR: 0.30,
     p: 0.50, q: 0.30, r: 0.40, m: 0.50, n: 0.30,
     A: 1.0, A_rec: 1.2, A_ref: 1.0, Q: 1.0,
     F_key: "superlinear", O_key: "peaked", obs_mode: "dynamic",
     E_key: "linear", B_key: "linear", X_key: "linear", C_key: "linear", S_key: "linear",
-    tau_max: 30.0,
+    I_runaway: 50.0, tau_max: 40.0,
   };
   const RSI_DEMO_Y0 = [0.8, 0.85, 0.10];
-  const RSI_W_HOLD = 0.25;   // regulation keeps pace with recursion
-  const RSI_W_FAIL = 1.80;   // recursion erodes regulation faster than it rebuilds
+  const RSI_W_HOLD = 0.15;   // regulation keeps pace with recursion
+  const RSI_W_FAIL = 1.50;   // recursion erodes regulation faster than it rebuilds
 
   const $ = (id) => document.getElementById(id);
   const fmtNum = (v) => {
@@ -298,6 +299,13 @@
     }
     return null;
   }
+  // First index where capability crosses the runaway threshold — the point the
+  // model can no longer be trusted; we treat it as the civilisation's collapse
+  // and end the trajectory there.
+  function runawayIdx(res, p) {
+    for (let i = 0; i < res.I.length; i++) if (res.I[i] > p.I_runaway) return i;
+    return null;
+  }
   // Two branches from the CURRENT settings, forking only on regulation erosion w.
   function computeRSIBranches() {
     const pHold = Object.assign({}, params, { w: RSI_W_HOLD });
@@ -305,8 +313,8 @@
     const resHold = ROF.integrate(pHold, y0);
     const resFail = ROF.integrate(pFail, y0);
     return {
-      hold: { res: resHold, params: pHold, regime: ROF.classifyRegime(resHold, pHold).label },
-      fail: { res: resFail, params: pFail, regime: ROF.classifyRegime(resFail, pFail).label },
+      hold: { res: resHold, params: pHold, collapseIdx: runawayIdx(resHold, pHold), regime: ROF.classifyRegime(resHold, pHold).label },
+      fail: { res: resFail, params: pFail, collapseIdx: runawayIdx(resFail, pFail), regime: ROF.classifyRegime(resFail, pFail).label },
       onsetTau: rsiOnsetTau(pFail, resFail),
     };
   }
@@ -319,21 +327,18 @@
     const el = $("narr-rsi");
     if (!el) return;
     const onset = b.onsetTau;
+    const failCol = b.fail.collapseIdx != null;
     const onsetTxt = onset == null
-      ? "Recursion never overtakes ordinary growth for these settings — load the demo, or raise the recursive terms (b, A_rec) or use a super-linear F(I), to see the take-off."
+      ? "Recursion does not overtake ordinary growth for these settings. Press Reset to RSI parameters, or raise the recursive terms (b, A_rec) with a super-linear F(I), to see the take-off."
       : `Recursive self-improvement overtakes ordinary growth at τ ≈ ${onset.toFixed(1)}.`;
-    const surv = /expansionist|optimized|visible/.test(b.hold.regime);
-    const coll = /collapse|runaway/.test(b.fail.regime);
-    const holdTxt = surv
-      ? "with regulation intact, capability climbs to an advanced but controlled level and the civilisation survives"
-      : `with strong regulation the civilisation ends in the ${b.hold.regime.replace(/-/g, " ")} regime`;
-    const failTxt = coll
-      ? "when recursion erodes control past its floor, capability runs away and self-control collapses"
-      : `with weak regulation the civilisation ends in the ${b.fail.regime.replace(/-/g, " ")} regime`;
-    el.className = "narrative " + (coll ? "warn" : "neutral");
+    const holdTxt = "when regulation holds, self-control stays high and capability stays controlled";
+    const failTxt = failCol
+      ? "when regulation cannot keep pace, capability runs away past the runaway threshold and the trajectory ends in collapse"
+      : "the low-regulation branch drives capability higher and pushes self-control toward its floor";
+    el.className = "narrative " + (failCol ? "warn" : "neutral");
     el.innerHTML = `<span class="narr-dot"></span><div class="narr-body">`
       + `<p class="narr-title">Same take-off, two fates</p>`
-      + `<p class="narr-text">${escapeHtml(onsetTxt)} From that point on the branches diverge on one thing only — regulation: ${escapeHtml(holdTxt)}; ${escapeHtml(failTxt)}.</p>`
+      + `<p class="narr-text">${escapeHtml(onsetTxt)} From there the branches differ on one thing, regulation: ${escapeHtml(holdTxt)}; ${escapeHtml(failTxt)}.</p>`
       + `</div>`;
   }
   function loadRSIDemo() {

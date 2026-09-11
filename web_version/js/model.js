@@ -126,17 +126,32 @@
 
     const FI = F_REGISTRY[p.F_key](I, p);
 
-    const dI = p.a * A * I + p.b * A_rec * FI - p.c * R * I - p.sI * I * I;
-    const dR = p.u * A_ref + p.v * Q_val - p.w * A_rec - p.sR * R;
+    // dI/dτ = a*A*I + b*A_rec*F(I) - [c*R*I] - sI*I²
+    // Regulatory damping is gated by term_damping (default true) to match the
+    // Python reference's reduced stage models.
+    const damping = (p.term_damping === false) ? 0.0 : p.c * R * I;
+    const dI = p.a * A * I + p.b * A_rec * FI - damping - p.sI * I * I;
+
+    // dR/dτ = (u*A_ref + v*Q)*(1 - R) - (w*A_rec + sR)*R
+    // Building acts on the remaining headroom (1 - R); erosion is proportional
+    // to the regulation that exists. This confines R to [0, 1] structurally —
+    // no clamping. (Must match model/system.py exactly.)
+    const build = p.u * A_ref + p.v * Q_val;
+    const erode = p.w * A_rec + p.sR;
+    const dR = build * (1.0 - R) - erode * R;
 
     if (!dynamic) return [dI, dR];
 
-    const dO =
+    // dO/dτ = production - (O - O_floor)*suppression
+    // Suppression is a fractional rate, so O is bounded below by O_floor.
+    const production =
       p.p * E_REGISTRY[p.E_key](I, R, p) +
       p.q * B_REGISTRY[p.B_key](I, R, p) +
-      p.r * X_REGISTRY[p.X_key](I, R, p) -
-      p.m * C_REGISTRY[p.C_key](I, R, p) -
+      p.r * X_REGISTRY[p.X_key](I, R, p);
+    const suppression =
+      p.m * C_REGISTRY[p.C_key](I, R, p) +
       p.n * S_REGISTRY[p.S_key](I, R, p);
+    const dO = production - (O - p.O_floor) * suppression;
     return [dI, dR, dO];
   }
 

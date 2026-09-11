@@ -12,9 +12,9 @@
     K: 5.0, lam: 0.30, k: 1.0, Ic: 5.0, threshold_sign: 1,
     kappa: 1.0, P_search: 0.50, P_surv: 0.80, N_true: 1.0,
     eta: 1.0, E: 1.0,
-    Theta: 5.0, I_runaway: 50.0, R_min: 0.05, I_advanced: 5.0, O_detectable: 0.10, eps: 1e-6,
+    Theta: 5.0, I_runaway: 50.0, R_min: 0.05, I_advanced: 5.0, O_detectable: 0.10, O_floor: 1e-3, eps: 1e-6,
     tau_max: 50.0, n_points: 1000, rtol: 1e-6, atol: 1e-9,
-    time_varying: false, stage_key: "",
+    term_damping: true, time_varying: false, stage_key: "",
   };
 
   const BOUNDS = {
@@ -25,7 +25,7 @@
     K: [0.1, 50], lam: [0.01, 3], k: [0.1, 10], Ic: [0, 50],
     kappa: [0.01, 10], P_search: [0, 1], P_surv: [0, 1], N_true: [0, 1e6],
     eta: [0.1, 3], E: [0.01, 5],
-    Theta: [0.1, 50], I_runaway: [1, 1000], R_min: [0, 1], I_advanced: [0, 100], O_detectable: [0, 1],
+    Theta: [0.1, 50], I_runaway: [1, 1000], R_min: [0, 1], I_advanced: [0, 100], O_detectable: [0, 1], O_floor: [0, 0.1],
     tau_max: [1, 500],
   };
 
@@ -37,7 +37,7 @@
     "Shape parameters": ["K", "lam", "k", "Ic"],
     "Detection": ["kappa", "P_search", "P_surv", "N_true"],
     "Lambert": ["eta", "E"],
-    "Thresholds": ["Theta", "I_runaway", "R_min", "I_advanced", "O_detectable"],
+    "Thresholds": ["Theta", "I_runaway", "R_min", "I_advanced", "O_detectable", "O_floor"],
     "Solver / Time": ["tau_max"],
   };
 
@@ -50,7 +50,7 @@
     kappa: "κ (detection sensitivity)", P_search: "P_search (search coverage)", P_surv: "P_surv (survival probability)", N_true: "N_true (true civ count)",
     eta: "η (regulation exponent)", E: "E (alignment factor)",
     Theta: "Θ (collapse threshold)", I_runaway: "I_runaway (runaway threshold)", R_min: "R_min (minimum regulation)",
-    I_advanced: "I_advanced (advanced threshold)", O_detectable: "O_detectable (detection floor)",
+    I_advanced: "I_advanced (advanced threshold)", O_detectable: "O_detectable (detection floor)", O_floor: "O_floor (thermodynamic floor)",
     tau_max: "τ_max (simulation time)",
   };
 
