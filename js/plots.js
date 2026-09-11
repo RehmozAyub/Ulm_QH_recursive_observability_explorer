@@ -204,5 +204,71 @@
     Plotly.react(div, traces, layout, CONFIG);
   }
 
-  global.ROF_PLOTS = { plotIR, plotO, plotN, plotPhase, plotLambert, plotOFunc, COLORS: C };
+  // Plot 7: Recursive Take-off. Two branches of one civilisation that fork only
+  // on whether regulation keeps pace with recursion. Time on the x-axis; the
+  // fails branch's trajectory ENDS at the collapse point (capability past the
+  // runaway threshold), marked with an X. Regulation is bounded in [0, 1].
+  function plotRSI(divCap, divReg, branches, params) {
+    const HOLD = C.cyan, FAIL = C.coral;
+    const hold = branches.hold.res, fail = branches.fail.res;
+    const onset = branches.onsetTau;
+    const hi = branches.hold.collapseIdx == null ? hold.tau.length - 1 : branches.hold.collapseIdx;
+    const fi = branches.fail.collapseIdx == null ? fail.tau.length - 1 : branches.fail.collapseIdx;
+    const failCollapsed = branches.fail.collapseIdx != null;
+    const holdCollapsed = branches.hold.collapseIdx != null;
+    const cut = (arr, n) => arr.slice(0, n + 1);
+
+    function onsetShape() {
+      if (onset == null) return [];
+      return [{ type: "line", x0: onset, x1: onset, yref: "paper", y0: 0, y1: 1, line: { color: "rgba(200,210,255,.4)", width: 1.2, dash: "dot" } }];
+    }
+    function onsetAnn() {
+      if (onset == null) return [];
+      // sits in the top margin, above the plot, centred on the onset line
+      return [{ x: onset, yref: "paper", y: 1.0, yanchor: "bottom", xanchor: "center", yshift: 3, text: "RSI onset", showarrow: false, font: { size: 9, color: "rgba(200,210,255,.6)" } }];
+    }
+    const rsiMargin = { l: 58, r: 58, t: 30, b: 46 };
+    // -- Capability panel --
+    const capTraces = [
+      { x: cut(hold.tau, hi), y: cut(hold.I, hi), name: "regulation holds", mode: "lines", line: { color: HOLD, width: 2.7 } },
+      { x: cut(fail.tau, fi), y: cut(fail.I, fi), name: "regulation fails", mode: "lines", line: { color: FAIL, width: 2.7 } },
+    ];
+    if (failCollapsed) capTraces.push({ x: [fail.tau[fi]], y: [fail.I[fi]], mode: "markers", marker: { color: FAIL, size: 15, symbol: "x", line: { width: 0 } }, showlegend: false, hoverinfo: "skip" });
+    const yTop = Math.max(params.I_runaway * 1.12, ROF.arrMax(cut(hold.I, hi)) * 1.15, params.I_advanced * 2);
+    const capShapes = onsetShape().concat([
+      { type: "line", xref: "paper", x0: 0, x1: 1, y0: params.I_advanced, y1: params.I_advanced, line: { color: "rgba(200,210,255,.3)", width: 1, dash: "dash" } },
+    ]);
+    const capAnn = onsetAnn().concat([
+      { xref: "paper", x: 0.02, y: params.I_advanced, yanchor: "bottom", xanchor: "left", text: "advanced", showarrow: false, font: { size: 9, color: "rgba(200,210,255,.5)" } },
+      { x: hold.tau[hi], y: hold.I[hi], xanchor: "right", yanchor: "bottom", xshift: -4, yshift: 6, text: "stays controlled", showarrow: false, font: { size: 11, color: HOLD } },
+    ]);
+    if (failCollapsed) capAnn.push({ x: fail.tau[fi], y: fail.I[fi], xanchor: "left", yanchor: "middle", xshift: 14, text: "runs away, collapses", showarrow: false, font: { size: 11, color: FAIL } });
+    Plotly.react(divCap, capTraces, baseLayout({
+      showlegend: false, margin: rsiMargin,
+      yaxis: { title: { text: "I — capability" }, gridcolor: GRID, zerolinecolor: ZERO, range: [0, yTop] },
+      shapes: capShapes, annotations: capAnn,
+    }), CONFIG);
+
+    // -- Regulation panel -- bounded in [0, 1] by construction
+    const regTraces = [
+      { x: cut(hold.tau, hi), y: cut(hold.R, hi), name: "regulation holds", mode: "lines", line: { color: HOLD, width: 2.5 } },
+      { x: cut(fail.tau, fi), y: cut(fail.R, fi), name: "regulation fails", mode: "lines", line: { color: FAIL, width: 2.5 } },
+    ];
+    if (failCollapsed) regTraces.push({ x: [fail.tau[fi]], y: [fail.R[fi]], mode: "markers", marker: { color: FAIL, size: 15, symbol: "x", line: { width: 0 } }, showlegend: false, hoverinfo: "skip" });
+    const regShapes = onsetShape().concat([
+      { type: "line", xref: "paper", x0: 0, x1: 1, y0: params.R_min, y1: params.R_min, line: { color: "rgba(232,116,110,.45)", width: 1, dash: "dot" } },
+    ]);
+    const regAnn = onsetAnn().concat([
+      { xref: "paper", x: 0.02, y: params.R_min, yanchor: "bottom", xanchor: "left", text: "control floor R_min", showarrow: false, font: { size: 9, color: "rgba(232,116,110,.65)" } },
+      { x: hold.tau[hi], y: hold.R[hi], xanchor: "right", yanchor: "bottom", xshift: -4, yshift: 4, text: "in control", showarrow: false, font: { size: 11, color: HOLD } },
+    ]);
+    if (failCollapsed) regAnn.push({ x: fail.tau[fi], y: fail.R[fi], xanchor: "left", yanchor: "middle", xshift: 14, text: "control lost", showarrow: false, font: { size: 11, color: FAIL } });
+    Plotly.react(divReg, regTraces, baseLayout({
+      showlegend: false, margin: rsiMargin,
+      yaxis: { title: { text: "R — self-control" }, gridcolor: GRID, zerolinecolor: ZERO, range: [0, 1.0] },
+      shapes: regShapes, annotations: regAnn,
+    }), CONFIG);
+  }
+
+  global.ROF_PLOTS = { plotIR, plotO, plotN, plotPhase, plotLambert, plotOFunc, plotRSI, COLORS: C };
 })(typeof window !== "undefined" ? window : globalThis);

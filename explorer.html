@@ -167,6 +167,7 @@
           <button class="tab-btn" data-tab="ofunc">Observability Functions</button>
           <button class="tab-btn" data-tab="regime">Regime Analysis</button>
           <button class="tab-btn" data-tab="drake">Drake Decomposition</button>
+          <button class="tab-btn" data-tab="rsi">Recursive Take-off</button>
         </nav>
 
         <!-- Trajectories -->
@@ -251,6 +252,32 @@
                 <div class="chain" id="drake-rof-chain"></div>
                 <p class="eq-note" style="margin-top:16px">The ROF multiplies the true count by survival, the model's signal probability h(O), and search coverage — collapsing an in-principle population to an actually-observed one.</p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recursive Take-off (RSI aha) — placed last, after the six core views -->
+        <section class="tab-panel" data-panel="rsi">
+          <div class="glass panel-pad" style="margin-bottom:18px">
+            <div class="rsi-head" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+              <div>
+                <h3 class="panel-head">Recursive Take-off: where intelligence starts improving itself</h3>
+                <p class="panel-sub" style="max-width:76ch;margin-bottom:0">The moment the whole model turns on. Two copies of one civilisation run side by side, forked only on whether regulation keeps pace with recursion. Recursive self-improvement lifts capability in both; the dotted line marks <b>RSI onset</b>, where capability improving <em>itself</em> overtakes ordinary growth. With regulation the capability stays controlled. Without it, capability runs away past the runaway threshold and the trajectory ends in collapse.</p>
+              </div>
+              <button class="btn accent" id="rsi-demo-btn" type="button">Reset to RSI parameters</button>
+            </div>
+            <div class="narrative" id="narr-rsi" style="margin-top:14px"></div>
+          </div>
+          <div class="plot-stack">
+            <div class="glass panel-pad">
+              <h3 class="panel-head">Capability</h3>
+              <p class="panel-sub">I(τ) for both branches. The regulated branch stays controlled; the unregulated one runs away, and its trajectory is ended at the collapse point (marked with an X).</p>
+              <div class="plot" id="plot-rsi-cap"></div>
+            </div>
+            <div class="glass panel-pad">
+              <h3 class="panel-head">Regulation (self-control)</h3>
+              <p class="panel-sub">R(τ) for the same two branches. Regulation is bounded in [0, 1] by construction, never negative: one branch keeps control, the other loses it.</p>
+              <div class="plot" id="plot-rsi-reg"></div>
             </div>
           </div>
         </section>
